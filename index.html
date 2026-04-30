@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語総まとめ N3 漢字 れんしゅう</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic Pro','Meiryo',sans-serif;background:#f4f6f9;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:20px 12px}
+.app{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.08);max-width:660px;width:100%;padding:28px 24px 32px}
+/* Menu screens */
+.menu-screen{text-align:center;padding:1.5rem 0.5rem}
+.menu-screen h1{font-size:20px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.menu-screen p{font-size:13px;color:#888;margin-bottom:1.5rem}
+.week-cards{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.week-card{flex:1;min-width:90px;max-width:110px;border:2px solid #d0d8e4;border-radius:14px;padding:16px 8px;cursor:pointer;background:#fff;transition:all .2s;text-align:center}
+.week-card:hover{border-color:#185FA5;box-shadow:0 4px 16px rgba(24,95,165,.12);transform:translateY(-2px)}
+.week-card.empty{opacity:0.4;cursor:not-allowed;pointer-events:none}
+.wc-num{font-size:28px;font-weight:700;color:#185FA5;margin-bottom:4px}
+.wc-title{font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px}
+.wc-count{display:inline-block;margin-top:6px;font-size:11px;padding:2px 8px;border-radius:99px;background:#E6F1FB;color:#185FA5;font-weight:600}
+.day-cards{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.day-card{flex:1;min-width:110px;max-width:140px;border:2px solid #d0d8e4;border-radius:14px;padding:16px 10px;cursor:pointer;background:#fff;transition:all .2s;text-align:center}
+.day-card:hover{border-color:#185FA5;box-shadow:0 4px 16px rgba(24,95,165,.12);transform:translateY(-2px)}
+.dc-num{font-size:28px;font-weight:700;color:#185FA5;margin-bottom:4px}
+.dc-title{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:2px}
+.dc-sub{font-size:11px;color:#888}
+.dc-count{display:inline-block;margin-top:6px;font-size:11px;padding:2px 8px;border-radius:99px;background:#E6F1FB;color:#185FA5;font-weight:600}
+.breadcrumb{font-size:12px;color:#888;margin-bottom:1rem;text-align:center}
+.breadcrumb span{color:#185FA5;cursor:pointer;text-decoration:underline}
+/* Quiz screen */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.ttl{font-size:16px;font-weight:700;color:#1a1a2e}
+.ttl-sub{font-size:12px;color:#888;margin-top:2px}
+.home-link{color:#185FA5;cursor:pointer;text-decoration:underline;font-size:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:5px 11px;border:1.5px solid #d0d8e4;border-radius:99px;font-size:12px;cursor:pointer;color:#666;background:#fff;transition:all .15s;font-family:inherit}
+.tab:hover{border-color:#185FA5;color:#185FA5}
+.tab.on{background:#185FA5;color:#fff;border-color:#185FA5}
+.pbw{width:100%;height:5px;background:#eef2f7;border-radius:99px;margin:12px 0 20px}
+.pbf{height:5px;background:#185FA5;border-radius:99px;transition:width .4s}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 12px;border-radius:99px;margin-bottom:10px;background:#E6F1FB;color:#185FA5;letter-spacing:.3px}
+.qn{font-size:12px;color:#aaa;margin-bottom:5px}
+.q{font-size:17px;font-weight:600;color:#1a1a2e;margin-bottom:1.3rem;line-height:1.6}
+.kbig{font-size:40px;font-weight:700;display:block;margin-bottom:6px;color:#1a1a2e}
+.sub-hint{margin-top:10px;padding:10px 14px;background:#f4f6f9;border-left:3px solid #185FA5;border-radius:6px;font-size:14px;color:#555;line-height:1.6}
+.choices{display:flex;flex-direction:column;gap:10px;margin-bottom:1.2rem}
+.cb{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1.5px solid #e0e6ef;border-radius:10px;background:#fff;cursor:pointer;font-size:15px;color:#1a1a2e;text-align:left;transition:background .15s,border-color .15s;font-family:inherit;width:100%}
+.cb:hover:not(:disabled){background:#f0f5ff;border-color:#185FA5}
+.cb.ok{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.cb.ng{border-color:#E24B4A;background:#FCEBEB;color:#501313}
+.cb.rv{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.cl{font-size:13px;font-weight:600;color:#aaa;min-width:22px}
+.fb{padding:13px 16px;border-radius:10px;font-size:14px;margin-bottom:1.2rem;display:none;line-height:1.7}
+.fb.ok{background:#E1F5EE;color:#085041;border:1.5px solid #5DCAA5}
+.fb.ng{background:#FCEBEB;color:#501313;border:1.5px solid #F09595}
+.nxt{padding:11px 26px;border:none;border-radius:10px;background:#185FA5;color:#fff;font-size:15px;cursor:pointer;font-family:inherit;font-weight:600}
+.nxt:hover{background:#0C447C}
+.bck{padding:11px 18px;border:1.5px solid #d0d8e4;border-radius:10px;background:#fff;color:#555;font-size:14px;cursor:pointer;font-family:inherit;font-weight:500}
+.bck:hover{border-color:#185FA5;color:#185FA5}
+/* Score */
+.sc{text-align:center;padding:2rem 1rem}
+.snum{font-size:56px;font-weight:700;color:#185FA5}
+.slbl{font-size:16px;color:#888;margin-top:8px;margin-bottom:1.5rem}
+.srow{display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.scard{background:#f4f6f9;border-radius:10px;padding:14px 22px;text-align:center;min-width:90px}
+.sn{font-size:26px;font-weight:700}
+.sl{font-size:12px;color:#888;margin-top:3px}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.rbtn{padding:11px 24px;background:#185FA5;color:#fff;border:none;border-radius:10px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:600}
+.rbtn:hover{background:#0C447C}
+.mbtn{padding:11px 24px;background:#fff;color:#185FA5;border:1.5px solid #185FA5;border-radius:10px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:600}
+.mbtn:hover{background:#E6F1FB}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+
+// WEEK/DAY DATA
+var WEEKS = {
+  "w1": {
+    label: "第1週",
+    topic: "でかける1",
+    days: {
+"w1d1":{title:"１日目",titleId:"Hari 1",topic:"駐車場",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"満車（まんしゃ）とは？",sub:"車を止める所が… / Tempat parkir...",ch:["いっぱいだ（penuh）","あいている（kosong）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"禁止（きんし）とは？",sub:"何かを… / Melakukan sesuatu itu...",ch:["してもいい（boleh）","してはいけない（tidak boleh）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"無料（むりょう）とは？",sub:"代金が… / Biayanya...",ch:["いる（ada）","いらない（tidak perlu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"断水（だんすい）とは？",sub:null,ch:["水道が使えなくなる（air ledeng tidak bisa digunakan）","水を飲んではいけない（dilarang minum air）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"無断（むだん）とは？",sub:null,ch:["許可がいらない（tidak perlu izin）","許可をもらわない（tidak meminta izin）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"不満（ふまん）とは？",sub:null,ch:["満足していない（tidak puas）","いっぱいではない（tidak penuh）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本文化に＿＿がある。",sub:null,ch:["関心（かんしん）＝ ketertarikan","方向（ほうこう）＝ arah"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"あまり＿＿をしないでください。",sub:null,ch:["不理（ふり）","無理（むり）＝ memaksakan diri"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"空車",sub:null,ch:["からしゃ","こうしゃ","あきしゃ","くうしゃ"],ans:3,mean:"parkir kosong / tersedia"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"お断り",sub:null,ch:["おこまわり","おとこわり","おことわり","おたちわり"],ans:2,mean:"penolakan / tidak bisa"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"駐車",sub:null,ch:["じゅうしゃ","ちゅうしゃ","じゅうちゃ","ちゅうちゃ"],ans:1,mean:"parkir"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"係の人",sub:null,ch:["けいりのひと","かかりのひと","けいのひと","かけりのひと"],ans:1,mean:"petugas / orang yang bertugas"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「むこう」の正しい漢字は？",sub:null,ch:["向こう","何こう","同こう","伺こう"],ans:0,mean:"向こう＝あちら側／seberang, sana"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「むきゅう」の正しい漢字は？",sub:null,ch:["未休","不休","無休","末休"],ans:2,mean:"無休＝休みなし／tanpa hari libur"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「かんけい」の正しい漢字は？",sub:null,ch:["門係","間係","間係（異体字）","関係"],ans:3,mean:"関係＝つながり／hubungan, keterkaitan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「ない」の正しい漢字は？",sub:null,ch:["禁い","不い","外い","無い"],ans:3,mean:"無い＝存在しない／tidak ada"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"満車",ch:["みちゃ","まんくるま","まんか","まんしゃ"],ans:3,mean:"（駐車場が）いっぱい／penuh"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"禁止",ch:["きんと","けんし","きんし","きんじ"],ans:2,mean:"してはいけない／dilarang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"無料",ch:["ぶりょう","ふりょう","むりょう","むりょ"],ans:2,mean:"代金がいらない／gratis"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"代金",ch:["かわきん","だいがね","だいきん","しろきん"],ans:2,mean:"支払うお金／harga, biaya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"断水",ch:["だんすい","だんさい","ぜっすい","だんみず"],ans:0,mean:"水道が止まること／air ledeng mati"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"水道",ch:["すいどう","すいろ","みちみず","みずどう"],ans:0,mean:"水が出るパイプ／saluran air"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"無断",ch:["むたん","ぶだん","むだん","ふだん"],ans:2,mean:"許可なしで／tanpa izin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"許可",ch:["きょか","ゆるか","きょうか","きか"],ans:0,mean:"OKをもらうこと／izin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"不満",ch:["ふまん","はまん","ぶまん","ふみつ"],ans:0,mean:"満足していない／tidak puas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"満足",ch:["みたそく","まんあし","まんそく","まんぞく"],ans:3,mean:"十分で嬉しい／puas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"日本文化",ch:["にほんぶんか","にっぽんふんか","にほんぶんが","にほんもんか"],ans:0,mean:"日本の文化／budaya Jepang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"関心",ch:["けんしん","かいしん","かんこころ","かんしん"],ans:3,mean:"興味があること／ketertarikan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"無理",ch:["ふり","ぶり","むり","むれ"],ans:2,mean:"できないことをする／memaksakan diri"}
+]},
+"w1d2":{title:"２日目",titleId:"Hari 2",topic:"横断歩道",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"送信（そうしん）とは？",sub:null,ch:["送る（mengirim）","信じる（mempercayai）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"横断（おうだん）とは？",sub:null,ch:["わたる（menyeberang）","ことわる（menolak）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"飛行（ひこう）とは？",sub:null,ch:["とぶ（terbang）","いく（pergi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"つぎの＿＿を右にまがる。",sub:"曲がり角の目印は？/ Tanda di persimpangan?",ch:["信号（しんごう）＝ lampu lalu lintas","号車（ごうしゃ）＝ nomor gerbong"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"＿＿に物をしまう。",sub:"物を入れる場所は？/ Tempat menyimpan barang?",ch:["飛び出し（とびだし）＝ melompat keluar","押し入れ（おしいれ）＝ lemari tanam"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"＿＿を持ってスピーチをする。",sub:"スピーチに必要なもの？/ Yang diperlukan saat pidato?",ch:["自信（じしん）＝ kepercayaan diri","信用（しんよう）＝ kepercayaan/kredit"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"＿＿を向く。",sub:"向く方向は？/ Ke arah mana?",ch:["横（よこ）＝ samping","式（しき）＝ upacara"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"安全を＿＿する。",sub:"安全を確かめる動作は？/ Tindakan memastikan keselamatan?",ch:["正確（せいかく）＝ akurat","確認（かくにん）＝ konfirmasi"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"認める",sub:null,ch:["みとめる","もとめる","まとめる","かためる"],ans:0,mean:"mengakui / menyetujui"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"確かめる",sub:null,ch:["たしかめる","はちかめる","たちかめる","はしかめる"],ans:0,mean:"memastikan / mengecek"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"左右",sub:null,ch:["そう","そゆう","さう","さゆう"],ans:3,mean:"kiri dan kanan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"横断",sub:null,ch:["こうだん","おうだん","ぼうだん","ゆうだん"],ans:1,mean:"menyeberang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「おす」の正しい漢字は？",sub:null,ch:["押す","神す","伸す","理す"],ans:0,mean:"押す＝力を加える／mendorong, menekan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「しんじる」の正しい漢字は？",sub:null,ch:["心じる","真じる","信じる","新じる"],ans:2,mean:"信じる＝信頼する／mempercayai"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「とぶ」の正しい漢字は？",sub:null,ch:["都ぶ","止ぶ","登ぶ","飛ぶ"],ans:3,mean:"飛ぶ＝空を移動する／terbang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"「しき」の正しい漢字は？",sub:null,ch:["係","式","号","向"],ans:1,mean:"式＝スタイル・形式／upacara, gaya, tipe"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"送信",ch:["さくしん","そうせん","そうじん","そうしん"],ans:3,mean:"メッセージを送ること／mengirim pesan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"横断",ch:["こうだん","よこだん","おうたん","おうだん"],ans:3,mean:"道路を横に渡ること／menyeberang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"飛行",ch:["ひかく","ひこう","ひぎょう","とびこう"],ans:1,mean:"空を飛ぶこと／terbang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"信号",ch:["しんごく","しごう","じんごう","しんごう"],ans:3,mean:"交通信号／lampu lalu lintas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"押し入れ",ch:["おしいり","もしいれ","おしいれ","おしいく"],ans:2,mean:"和室の収納スペース／lemari tanam"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自信",ch:["じせん","じすん","じしょ","じしん"],ans:3,mean:"自分を信じる気持ち／kepercayaan diri"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"安全",ch:["あんぜん","あんぜい","あんこう","あんかん"],ans:0,mean:"危険がないこと／aman"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"確認",ch:["かくにん","こくにん","かくじん","かくいん"],ans:0,mean:"確かめること／konfirmasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"左右",ch:["さゆう","さゆ","そゆう","さうえ"],ans:0,mean:"左と右／kiri dan kanan"}
+]},
+"w1d3":{title:"３日目",titleId:"Hari 3",topic:"サイン",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"午後は（　）に風が強くなるでしょう。",sub:"天気予報の言葉は？/ Kata prakiraan cuaca?",ch:["無断（むだん）＝ tanpa izin","左右（さゆう）＝ kiri kanan","無理（むり）＝ memaksakan diri","非常（ひじょう）＝ luar biasa/darurat"],ans:3},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本語の（　）会話を習っています。",sub:"どんな会話？/ Percakapan apa?",ch:["正常（せいじょう）＝ normal","非常（ひじょう）＝ darurat","日常（にちじょう）＝ sehari-hari","無常（むじょう）＝ ketidakkekalan"],ans:2},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）ですから、押さないでください。",sub:"なぜ押してはいけない？/ Mengapa tidak boleh ditekan?",ch:["危険（きけん）＝ berbahaya","満車（まんしゃ）＝ parkir penuh","信号（しんごう）＝ lampu lalu lintas","確認（かくにん）＝ konfirmasi"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"ホテルにとまったら、非常口を確かめておきましょう。\n「非常口」の読みは？",sub:null,ch:["いじょうぐち","ふじょうぐち","むじょうぐち","ひじょうぐち"],ans:3,mean:"pintu darurat"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"エレベーターを使わずに、階段を使うようにしています。\n「階段」の読みは？",sub:null,ch:["けいらん","けいだん","かいらん","かいだん"],ans:3,mean:"tangga"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"その箱の中に何が入っていますか。\n「箱」の読みは？",sub:null,ch:["ばこ","ほこ","はこ","ぼこ"],ans:2,mean:"kotak"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あぶないですから、ここであそばないでください。\n「あぶない」の正しい漢字は？",sub:null,ch:["険ない","危ない","非ない","注ない"],ans:1,mean:"危ない＝危険な／berbahaya"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ここにごみをすてないでください。\n「すてないで」の正しい漢字は？",sub:null,ch:["捨てないで","押てないで","飛てないで","認てないで"],ans:0,mean:"捨てる＝投げ捨てる／membuang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"非常",ch:["ひつう","ひかん","ひごく","ひじょう"],ans:3,mean:"緊急の・とても／darurat, luar biasa"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"非常口",ch:["ひつうぐち","ひじょうこう","ひじょうぐち","ひごうぐち"],ans:2,mean:"緊急出口／pintu darurat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"日常",ch:["にちつう","にちじょう","ひじょう","にちごく"],ans:1,mean:"毎日の・普通の／sehari-hari"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"階段",ch:["けいだん","かいたん","かいだん","かいらん"],ans:2,mean:"上り下りする段／tangga"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"危険",ch:["きはん","きかん","あぶけん","きけん"],ans:3,mean:"あぶないこと／bahaya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"正常",ch:["せいつう","せいかく","せいじょう","しょうじょう"],ans:2,mean:"普通の状態／normal"}
+]},
+"w1d4":{title:"４日目",titleId:"Hari 4",topic:"駅のホーム",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"外が見えるように（　）に座る。",sub:"窓の近く？通路の近く？/ Dekat jendela atau lorong?",ch:["窓側（まどがわ）＝ sisi jendela","通路側（つうろがわ）＝ sisi lorong"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この電車は全席（　）です。",sub:"席が決まっている？/ Tempat duduk sudah ditentukan?",ch:["安定（あんてい）＝ stabil","指定（してい）＝ ditentukan/reservasi"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"下り電車は（　）です。",sub:"電車の乗る場所は？/ Tempat naik kereta?",ch:["２番線（にばんせん）＝ jalur 2","２号車（にごうしゃ）＝ gerbong 2"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この店は年中（　）です。",sub:"休みがない店は？/ Toko yang tidak pernah tutup?",ch:["無休（むきゅう）＝ tidak pernah libur","定休（ていきゅう）＝ libur tetap"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"欠席の（　）を書く。",sub:"なぜ休むか説明するもの？/ Alasan tidak hadir?",ch:["自由（じゆう）＝ bebas","理由（りゆう）＝ alasan"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）を開ける。",sub:"電車の中で開けられるもの？/ Yang bisa dibuka di kereta?",ch:["席（せき）＝ tempat duduk","窓（まど）＝ jendela"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"電話（　）を教える。",sub:"電話のための情報は？/ Informasi untuk telepon?",ch:["番号（ばんごう）＝ nomor","信号（しんごう）＝ lampu lalu lintas"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"高速（　）を車で走る。",sub:"車で走る場所は？/ Tempat berkendara?",ch:["道路（どうろ）＝ jalan raya","通路（つうろ）＝ lorong/koridor"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"地下鉄に乗りかえましょう。\n「地下鉄」の読みは？",sub:null,ch:["ちがてつ","ちかてつ"],ans:1,mean:"kereta bawah tanah (subway)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"その駅はもう過ぎましたよ。\n「過ぎました」の読みは？",sub:null,ch:["すぎました","つぎました"],ans:0,mean:"sudah terlewat / melewati"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"過去のことは考えない。\n「過去」の読みは？",sub:null,ch:["かこ","かきょ"],ans:0,mean:"masa lalu"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"上り方面、電車がまいります。\n「方面」の読みは？",sub:null,ch:["かためん","ほうめん"],ans:1,mean:"arah / jurusan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かいそくはこの駅には止まりません。\n「かいそく」の正しい漢字は？",sub:null,ch:["快速","特急"],ans:0,mean:"快速＝速い列車／kereta cepat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"この駅ではタバコはぜんめん禁止です。\n「ぜんめん」の正しい漢字は？",sub:null,ch:["前面","全面"],ans:1,mean:"全面＝すべての面／seluruh permukaan, total"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"つぎは東京、東京です。\n「つぎ」の正しい漢字は？",sub:null,ch:["次","先"],ans:0,mean:"次＝その後の／berikutnya"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ふつうのきっぷと特急券を買う。\n「ふつう」の正しい漢字は？",sub:null,ch:["不通","普通"],ans:1,mean:"普通＝一般的な／biasa, umum"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"地下鉄",ch:["ちかでつ","ちがてつ","ちかてつ","じかてつ"],ans:2,mean:"地下を走る電車／kereta bawah tanah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"普通",ch:["ふつう","ふとう","ふごう","ふどう"],ans:0,mean:"普段の・特別ではない／biasa"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"通過",ch:["つうが","つうか","こうか","とおか"],ans:1,mean:"止まらずに通ること／melewati tanpa berhenti"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"方面",ch:["ほうめん","ほめん","ほうめい","かためん"],ans:0,mean:"方向・エリア／arah, kawasan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"快速",ch:["かいそく","こうそく","かそく","かいしょく"],ans:0,mean:"速い列車／kereta cepat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"過去",ch:["かきょ","こうご","かこ","こか"],ans:2,mean:"昔・以前のこと／masa lalu"}
+]},
+"w1d5":{title:"５日目",titleId:"Hari 5",topic:"特急電車",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"外が見えるように（　）に座る。",sub:"窓の近く？通路の近く？/ Dekat jendela atau lorong?",ch:["窓側（まどがわ）＝ sisi jendela","通路側（つうろがわ）＝ sisi lorong"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この電車は全席（　）です。",sub:"席が決まっている？/ Tempat duduk ditentukan?",ch:["安定（あんてい）＝ stabil","指定（してい）＝ ditentukan/reservasi"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"下り電車は（　）です。",sub:"乗る場所は？/ Tempat naik kereta?",ch:["２番線（にばんせん）＝ jalur 2","２号車（にごうしゃ）＝ gerbong 2"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この店は年中（　）です。",sub:"休みがない店は？/ Toko tidak pernah tutup?",ch:["無休（むきゅう）＝ tidak pernah libur","定休（ていきゅう）＝ libur tetap"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"欠席の（　）を書く。",sub:"なぜ休む？/ Alasan tidak hadir?",ch:["自由（じゆう）＝ bebas","理由（りゆう）＝ alasan"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）を開ける。",sub:"電車の中で開けられるもの？/ Yang bisa dibuka di kereta?",ch:["席（せき）＝ tempat duduk","窓（まど）＝ jendela"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"電話（　）を教える。",sub:"電話のための情報は？/ Informasi untuk telepon?",ch:["番号（ばんごう）＝ nomor","信号（しんごう）＝ lampu lalu lintas"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"高速（　）を車で走る。",sub:"車で走る場所は？/ Tempat berkendara?",ch:["道路（どうろ）＝ jalan raya","通路（つうろ）＝ lorong"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"パーティーに出席する。\n「出席」の読みは？",sub:null,ch:["しゅっせき","しゅせき"],ans:0,mean:"hadir (di acara)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"細くて長い指。\n「指」の読みは？",sub:null,ch:["ゆみ","ゆび"],ans:1,mean:"jari"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"自由席のきっぷを買う。\n「自由席」の読みは？",sub:null,ch:["じゅうゆせき","じゆうせき"],ans:1,mean:"kursi bebas (non-reservasi)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"道の両側に店がならんでいる。\n「両側」の読みは？",sub:null,ch:["りょうがわ","りょうかわ"],ans:0,mean:"kedua sisi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"ここは指定席です。\n「指定席」の読みは？",sub:null,ch:["ちていせき","していせき"],ans:1,mean:"kursi reservasi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"田中さんは欠席です。\n「欠席」の読みは？",sub:null,ch:["けっせき","くうせき"],ans:0,mean:"tidak hadir / absen"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"今日の天気はふあんていだ。\n「ふあんてい」の正しい漢字は？",sub:null,ch:["非安定","不安定"],ans:1,mean:"不安定＝安定していない／tidak stabil"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"つうろに物をおかないでください。\n「つうろ」の正しい漢字は？",sub:null,ch:["通路","線路"],ans:0,mean:"通路＝通り道／lorong, koridor"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"指定席",ch:["してせき","しいていせき","していせき","してくせき"],ans:2,mean:"予約して決めた席／kursi yang sudah dipesan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自由席",ch:["じゅうせき","じゆせき","じゆうしき","じゆうせき"],ans:3,mean:"どこでも座れる席／kursi bebas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"出席",ch:["しゅせき","しゅっせき","でせき","しゅっしき"],ans:1,mean:"参加すること／hadir"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"欠席",ch:["けっせき","くっせき","かっせき","けせき"],ans:0,mean:"休むこと／absen"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"番号",ch:["ばんこう","ばんごう","ばごう","はんごう"],ans:1,mean:"ナンバー／nomor"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"両側",ch:["りょうそく","りょうかわ","ふたがわ","りょうがわ"],ans:3,mean:"左右の両方の側／kedua sisi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"不安定",ch:["ふかんてい","ひあんてい","ふあんてい","ぶあんてい"],ans:2,mean:"安定していない／tidak stabil"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"通路",ch:["つろ","とおろ","つうろ","とうろ"],ans:2,mean:"通り抜ける道／lorong"}
+]},
+"w1d6":{title:"６日目",titleId:"Hari 6",topic:"バス",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お年寄りや体の不自由な人のための席は？",sub:"特別な席の名前は？/ Nama kursi khusus?",ch:["優先席（ゆうせんせき）＝ kursi prioritas","指定席（していせき）＝ kursi reservasi"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"バスが止まるところは？",sub:"バスの停留所は？/ Tempat berhenti bus?",ch:["降車口（こうしゃぐち）＝ pintu keluar","バス停（バスてい）＝ halte bus"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"円をドルに（　）する。",sub:"お金を交換する？/ Menukar uang?",ch:["両側（りょうがわ）＝ kedua sisi","両替（りょうがえ）＝ menukar uang"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"たたみの部屋で（　）する。",sub:"日本式の座り方は？/ Cara duduk gaya Jepang?",ch:["正座（せいざ）＝ duduk bersimpuh","座席（ざせき）＝ tempat duduk"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"カードでも（　）でもいいです。",sub:"支払い方法は？/ Metode pembayaran?",ch:["現金（げんきん）＝ uang tunai","料金（りょうきん）＝ biaya/tarif"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"パジャマに（　）寝る。",sub:"服を変えてから寝る？/ Ganti baju sebelum tidur?",ch:["着替えて（きがえて）＝ berganti baju","取り替えて（とりかえて）＝ mengganti/menukar"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）をもらって順番を待つ。",sub:"番号が書いてある紙は？/ Kertas dengan nomor antrian?",ch:["回数券（かいすうけん）＝ tiket langganan","整理券（せいりけん）＝ nomor antrian"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"バスを（　）。",sub:"バスから出る動作は？/ Tindakan keluar dari bus?",ch:["降りる（おりる）＝ turun（dari bus）","降る（ふる）＝ turun（hujan/salju）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"田中さんが現れた。\n「現れた」の読みは？",sub:null,ch:["あらわれた","あわられた"],ans:0,mean:"muncul / hadir"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"席に座る。\n「座る」の読みは？",sub:null,ch:["さわる","すわる"],ans:1,mean:"duduk"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"きれいな女優さん。\n「女優」の読みは？",sub:null,ch:["じょゆう","じょうゆう"],ans:0,mean:"aktris / bintang film wanita"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"両親に会う。\n「両親」の読みは？",sub:null,ch:["りょうしん","りゅうしん"],ans:0,mean:"kedua orang tua"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"各駅ていしゃ。\n「ていしゃ」の正しい漢字は？",sub:null,ch:["駐車","停車"],ans:1,mean:"停車＝乗り物が止まる／berhenti (kendaraan)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"３時いこうに来てください。\n「いこう」の正しい漢字は？",sub:null,ch:["以後","以降"],ans:0,mean:"以降＝その時から後／sejak saat itu dan seterusnya"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"じょうしゃけんを買う。\n「じょうしゃけん」の正しい漢字は？",sub:null,ch:["乗車券","駐車券"],ans:0,mean:"乗車券＝乗るためのきっぷ／tiket naik"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あの人はやさしい。\n「やさしい」の正しい漢字は？",sub:null,ch:["楽しい","優しい"],ans:1,mean:"優しい＝思いやりがある／baik hati, lembut"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"優先席",ch:["ようせんせき","ゆうざいせき","ゆうせんしき","ゆうせんせき"],ans:3,mean:"お年寄りなどのための席／kursi prioritas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"整理券",ch:["せいけん","せいりけん","せいりきん","せりけん"],ans:1,mean:"番号が書いた順番待ちの紙／nomor antrian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"現金",ch:["げんかね","げんきん","げきん","けんきん"],ans:1,mean:"お札や硬貨のお金／uang tunai"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"両替",ch:["ふたがえ","りょうがえ","りょうたい","りょうかえ"],ans:1,mean:"お金を別の種類に換えること／menukar uang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"降車口",ch:["こうくちしゃ","おりしゃぐち","こうしゃこう","こうしゃぐち"],ans:3,mean:"バスや電車から降りる出口／pintu keluar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"正座",ch:["しょうざ","せいぞ","せいざ","せいさ"],ans:2,mean:"日本式の座り方／duduk bersimpuh gaya Jepang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"乗車券",ch:["しょうしゃけん","じょうしゃけん","のりしゃけん","じょうくるまけん"],ans:1,mean:"乗るためのきっぷ／tiket naik"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"両親",ch:["ふたおや","りょうおや","りゅうしん","りょうしん"],ans:3,mean:"父と母／kedua orang tua"}
+]},
+"w1d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"[飛び出し注意]と書いてあります。読みは？",sub:null,ch:["よびだしちゅうい","とびだしちゅうい","とびだしじゅうい","よびだしじゅうい"],ans:1,mean:"perhatian: lompat keluar / waspadai anak berlari"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"この時計は正確です。[正確]の読みは？",sub:null,ch:["せいかく","せっかく","しょうかく","しょうがく"],ans:0,mean:"tepat / akurat"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"横断歩道をわたりましょう。[横断]の読みは？",sub:null,ch:["こうだん","おうだん","きんだん","そうだん"],ans:1,mean:"menyeberang"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"このなべは鉄で作られています。[鉄]の読みは？",sub:null,ch:["しつ","ねつ","れつ","てつ"],ans:3,mean:"besi / logam"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"優先席ではけいたい電話を使わないでください。[優先]の読みは？",sub:null,ch:["うせん","にゅうせん","ゆうせん","よやく"],ans:2,mean:"prioritas"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"料金は降りるときにはらってください。[降りる]の読みは？",sub:null,ch:["のりる","ふりる","こりる","おりる"],ans:3,mean:"turun (dari kendaraan)"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"関係者以外入らないでください。[関係者]の読みは？",sub:null,ch:["かんけいしゃ","かんれんしゃ","けいけんしゃ","かんきょうしゃ"],ans:0,mean:"orang yang bersangkutan / pihak terkait"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"確認ボタンを押します。[確認]の読みは？",sub:null,ch:["せきにん","かくにん","しょうにん","こうにん"],ans:1,mean:"konfirmasi"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"ドアの横にスイッチがあります。[横]の読みは？",sub:null,ch:["そば","よこ","たて","となり"],ans:1,mean:"samping"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"高速道路から飛行場が見えます。[飛行場]の読みは？",sub:null,ch:["こうくう","ひこうば","くうこう","ひこうじょう"],ans:3,mean:"bandara"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"席はなんばんですか。[なんばん]の正しい漢字は？",sub:null,ch:["何号","向番","何番","向号"],ans:2,mean:"何番＝何号？／nomor berapa"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"黄色いせんまで下がってお待ちください。[せん]の正しい漢字は？",sub:null,ch:["線","信","段","側"],ans:0,mean:"線＝ライン・路線／garis, jalur"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"あの女優はひょうげん力がある。[ひょうげん]の正しい漢字は？",sub:null,ch:["表信","表見","表言","表現"],ans:3,mean:"表現＝言葉や動作で示すこと／ekspresi, ungkapan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"社長はまちがいをみとめた。[みとめた]の正しい漢字は？",sub:null,ch:["定めた","認めた","窓めた","面めた"],ans:1,mean:"認める＝正しいと認識する／mengakui, menyetujui"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"この電車は（　）駅に止まります。",sub:"すべての駅に止まる電車は？ / Kereta yang berhenti di semua stasiun?",ch:["毎","次","各","両"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"あの信号は押しボタン（　）です。",sub:"押しボタンのタイプは？ / Jenis sinyal tombol tekan?",ch:["箱","席","向","式"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"駐車場はただいま（　）車です。",sub:"駐車場がいっぱいのとき？ / Saat parkir penuh?",ch:["両","満","禁","非"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"1万円以上は、送料（　）料です。",sub:"送料がかからないときは？ / Saat tidak ada biaya pengiriman?",ch:["非","不","無","禁"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"整理（　）を取ってお待ちください。",sub:"番号が書いてある紙は？ / Kertas nomor antrian?",ch:["停","箱","路","券"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"お金は料金（　）に入れてください。",sub:"お金を入れる容器は？ / Tempat memasukkan uang?",ch:["箱","式","側","券"],ans:0}
+]}
+    }
+  },
+  "w2": {
+    label: "第2週",
+    topic: "でかける2",
+    days: {
+"w2d1":{title:"1日目",titleId:"Hari 1",topic:"レストラン",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"営業中：店は（　）",sub:null,ch:["あいている（buka）","しまっている（tutup）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"準備中：店に（　）",sub:null,ch:["入れる（bisa masuk）","入れない（tidak bisa masuk）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"定休日：店には決まった休みの日が（　）",sub:null,ch:["ある（ada）","ない（tidak ada）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"営業案内：店についての（　）",sub:null,ch:["コンセプト（konsep）","インフォメーション（informasi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"予約うけたまわります：予約が（　）",sub:null,ch:["できる（bisa）","できない（tidak bisa）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ご予約確認メールを3日（　）にお送りします。",sub:null,ch:["以外（selain）","以内（dalam / kurang dari）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"屋上駐車場は夜9時に（　）のでご注意ください。",sub:null,ch:["備えます（mempersiapkan）","閉まります（tutup）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"あの店は（　）50種類のワインを備えている。",sub:null,ch:["約（sekitar）","各（masing-masing）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"営業",sub:null,ch:["えいぎゅう","えいぎょう","えいごう","えいよう"],ans:1,mean:"buka untuk bisnis / beroperasi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"準備",sub:null,ch:["じょうび","じょんび","じゅうび","じゅんび"],ans:3,mean:"persiapan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"案内",sub:null,ch:["あねい","あんねい","あない","あんない"],ans:3,mean:"informasi / panduan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"予約",sub:null,ch:["よやく","ゆやく","よゆく","やゆく"],ans:0,mean:"reservasi / janji"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"よしゅう の正しい漢字は？",sub:null,ch:["子習","了習","予習","丁習"],ans:2,mean:"予習＝前もって勉強する／belajar sebelumnya"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かいへい の正しい漢字は？",sub:null,ch:["閻閉","閉開","開閉","開門"],ans:2,mean:"開閉＝開けたり閉めたりする／membuka dan menutup"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"うちがわ の正しい漢字は？",sub:null,ch:["家側","内側","中側","向側"],ans:1,mean:"内側＝内部の面／sisi dalam, bagian dalam"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"そなえる の正しい漢字は？",sub:null,ch:["定える","準える","営える","備える"],ans:3,mean:"備える＝用意する／mempersiapkan, menyiapkan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"営業",ch:["えいよう","えいごう","えいぎゅう","えいぎょう"],ans:3,mean:"商売・仕事をすること／buka untuk bisnis"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"準備",ch:["じょんび","じゅんぴ","じゅうび","じゅんび"],ans:3,mean:"用意すること／persiapan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"定休日",ch:["ていきゅうび","じょうきゅうび","ていやすみ","さだきゅうび"],ans:0,mean:"決まった休みの日／hari libur tetap"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"案内",ch:["あんない","かんない","あない","あんねい"],ans:0,mean:"情報を教えること／informasi, panduan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"予約",ch:["よかく","よやく","ゆやく","よやつ"],ans:1,mean:"前もって申し込むこと／reservasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"以内",ch:["いない","いじょう","いがい","いか"],ans:0,mean:"その範囲の中／dalam, kurang dari"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"開閉",ch:["かいへい","かいぺい","かへい","かいてい"],ans:0,mean:"開けたり閉めたりすること／membuka dan menutup"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"予習",ch:["よしゅ","ゆしゅう","よじゅう","よしゅう"],ans:3,mean:"前もって勉強すること／belajar di muka"}
+]},
+"w2d2":{title:"2日目",titleId:"Hari 2",topic:"禁煙",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"当店：（　）店",sub:null,ch:["この（toko ini）","その（toko itu）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"全席禁煙：全部の席でたばこが（　）",sub:null,ch:["吸える（boleh merokok）","吸えない（tidak boleh merokok）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"安全：（　）",sub:null,ch:["危ない（berbahaya）","危なくない（tidak berbahaya）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"解答：（　）",sub:null,ch:["もんだい（soal）","こたえ（jawaban）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"買い物をして代金をはらうのは（　）",sub:null,ch:["当たり前だ（wajar）","無料だ（gratis）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"時計を（　）また組み立てる。",sub:null,ch:["分解して（membongkar）","停車して（berhenti）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"本の（　）を読む。",sub:null,ch:["理由（alasan）","解説（penjelasan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"たからくじが（　）",sub:"たからくじ＝lottery / lotre",ch:["当たる（menang）","認める（mengakui）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"様子",sub:null,ch:["ようす","ようし","やうす","やうし"],ans:0,mean:"keadaan / situasi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"協力",sub:null,ch:["こうりゅく","こうりょく","きゅうりき","きょうりょく"],ans:3,mean:"kerjasama"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"煙",sub:null,ch:["けむり","きむり","くむり","こむり"],ans:0,mean:"asap"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"本当",sub:null,ch:["ほんと","ほんど","ほんとう","ほんどう"],ans:2,mean:"sungguh / benar-benar"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おねがい の正しい漢字は？",sub:null,ch:["お顔い","お願い","お頭い","お預い"],ans:1,mean:"お願い＝頼み事／permintaan, tolong"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おきゃくさま の正しい漢字は？",sub:null,ch:["お各様","お皆様","お客様","お名様"],ans:2,mean:"お客様＝お客さん（丁寧）／pelanggan (sopan)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"りかい の正しい漢字は？",sub:null,ch:["野解","理解","利解","了解"],ans:1,mean:"理解＝わかること／memahami, pengertian"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぜんせき の正しい漢字は？",sub:null,ch:["全席","全度","金席","金度"],ans:0,mean:"全席＝すべての席／semua kursi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"全席",ch:["ぜんきゃく","ぜんにん","ぜんしき","ぜんせき"],ans:3,mean:"すべての席／semua kursi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"禁煙",ch:["きんがん","きんえん","きんぶん","きんけむ"],ans:1,mean:"たばこを吸ってはいけない／dilarang merokok"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"お客様",ch:["おかくさま","おきゃくよう","おかくよう","おきゃくさま"],ans:3,mean:"お客さん（丁寧）／pelanggan (sopan)"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"理解",ch:["りがい","りけい","りかい","りかえ"],ans:2,mean:"わかること／memahami"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"協力",ch:["こうりょく","こうりき","きょうりょく","きょうりき"],ans:2,mean:"一緒に助け合うこと／kerjasama"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"様子",ch:["ようす","ようし","さまこ","やうす"],ans:0,mean:"状態・ありさま／keadaan, situasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"分解",ch:["ぶかい","ぶんかい","ふんかい","ぶんかえ"],ans:1,mean:"バラバラにすること／membongkar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"当たり前",ch:["あたまえ","あたりまい","あたりまえ","あたりまけ"],ans:2,mean:"普通のこと・自然なこと／wajar, sudah semestinya"}
+]},
+"w2d3":{title:"3日目",titleId:"Hari 3",topic:"観光地図",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"遊園地：（　）ところ",sub:null,ch:["およぐごころ（berenang）","あそぶところ（tempat bermain/taman hiburan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"動物園：動物を（　）ところ",sub:null,ch:["買うところ（membeli）","見るところ（melihat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"港：（　）が着くところ",sub:null,ch:["船（kapal）","飛行機（pesawat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"美術：（　）",sub:"テクニック＝technique／アート＝art",ch:["テクニック（teknik）","アート（seni）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"神経質：小さいことを（　）",sub:null,ch:["気にする（merasa terganggu）","気にしない（tidak peduli）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"美術館：（　）ところ",sub:null,ch:["本を借りるところ（meminjam buku）","作品を見るところ（melihat karya seni）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本へ（　）来ました。",sub:null,ch:["観光で（untuk wisata）","空港で（di bandara）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）は立って手をたたいた。",sub:null,ch:["観客（penonton）","全席（semua kursi）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"お寺",sub:null,ch:["おでら","おたな","おしろ","おてら"],ans:3,mean:"kuil Buddha / vihara"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"港",sub:null,ch:["めらど","みらと","みなと","みなど"],ans:2,mean:"pelabuhan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"美しい",sub:null,ch:["うくつしい","うつくしい","うすくしい","うくすしい"],ans:1,mean:"indah, cantik"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"神社",sub:null,ch:["しんしゃ","じんじゃ","しんじゃ","かんしゃ"],ans:1,mean:"kuil Shinto / jinja"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あそぶ の正しい漢字は？",sub:null,ch:["遊ぶ","飛ぶ"],ans:0,mean:"遊ぶ＝楽しむ／bermain, bersenang-senang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かみさま の正しい漢字は？",sub:null,ch:["神様","客様"],ans:0,mean:"神様＝神／Tuhan, dewa"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"びじん の正しい漢字は？",sub:null,ch:["無人","美人"],ans:1,mean:"美人＝きれいな人／wanita cantik"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しゅじゅつ の正しい漢字は？",sub:null,ch:["技術","手術"],ans:1,mean:"手術＝外科手術／operasi (bedah)"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"遊園地",ch:["ゆうえんじ","ゆえんち","ゆうえんち","ゆうえんとち"],ans:2,mean:"遊ぶための施設／taman hiburan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"動物園",ch:["どうもつぞの","どうもつえん","どうぶつぞの","どうぶつえん"],ans:3,mean:"動物を見る場所／kebun binatang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"美術館",ch:["びじゅつかん","びじゅつえん","びじゅつかん","びじゅっかん"],ans:0,mean:"美術品を展示する場所／museum seni"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"神社",ch:["しんじゃ","じんじゃ","じんしゃ","しんしゃ"],ans:1,mean:"神道の宗教施設／kuil Shinto"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"観光",ch:["かんくう","かんごう","かんつう","かんこう"],ans:3,mean:"旅行して名所を見ること／wisata"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"空港",ch:["そらみなと","そらこう","くうこう","くうごう"],ans:2,mean:"飛行機が離着陸する場所／bandara"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"神経質",ch:["かみけいしつ","じんけいしつ","しんけいしつ","しんけいぶつ"],ans:2,mean:"小さいことが気になる性格／sensitif, mudah cemas"}
+]},
+"w2d4":{title:"4日目",titleId:"Hari 4",topic:"街の地図",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"差出人：手紙や荷物を（　）人",sub:null,ch:["送る（mengirim）","受け取る（menerima）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"歩道橋：車は（　）橋",sub:null,ch:["わたれる（bisa dilalui）","わたれない（tidak bisa dilalui）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"3と5の（　）は2です。",sub:null,ch:["次（berikutnya）","差（selisih/perbedaan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）で道を聞く。",sub:null,ch:["交番（pos polisi）","番号（nomor）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この本は勉強の（　）に立つ。",sub:null,ch:["約（sekitar）","役（berguna）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"50円の（　）切手を買いました。",sub:null,ch:["郵便（pos/surat）","整理（penataan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"クラスの（　）をえらびます。",sub:null,ch:["店員（pegawai toko）","役員（pejabat/pengurus）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）を右にまがってください。",sub:null,ch:["交差点（persimpangan）","横断歩道（zebra cross）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"橋",sub:null,ch:["はち","ばち","はし","ばし"],ans:2,mean:"jembatan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"市役所",sub:null,ch:["しやくしょ","しゃくしょ","しよくしょ","しょくしょ"],ans:0,mean:"kantor pemerintah kota"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"交通",sub:null,ch:["きょうちゅう","こうつう","こんちゅう","きょうつう"],ans:1,mean:"lalu lintas, transportasi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"郵便",sub:null,ch:["やうびん","ようべん","ゆうびん","ゆうべん"],ans:2,mean:"pos, surat-menyurat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こうかん の正しい漢字は？",sub:null,ch:["友換","父換","文換","交換"],ans:3,mean:"交換＝取り替えること／pertukaran, menukar"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"てんすう の正しい漢字は？",sub:null,ch:["定数","点数","階数","停数"],ans:1,mean:"点数＝スコア・得点／skor, nilai"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"やっきょく の正しい漢字は？",sub:null,ch:["薬局","楽局","薬屋","楽屋"],ans:0,mean:"薬局＝薬を売る店／apotek"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こうえん の正しい漢字は？",sub:null,ch:["草園","楽園","公園","窓園"],ans:2,mean:"公園＝公共の庭・広場／taman umum"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"交番",ch:["きょうばん","こうばん","こばん","こうびん"],ans:1,mean:"警察の小さな詰所／pos polisi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"郵便局",ch:["ゆうびんかん","ゆうびんきょく","ゆうびんじょ","ゆうびんしょ"],ans:1,mean:"郵便物を扱う場所／kantor pos"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"交差点",ch:["こうさいてん","こうさかど","こうさじゅん","こうさてん"],ans:3,mean:"道路が交わるところ／persimpangan jalan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"市役所",ch:["しやくじょ","しやくしょう","いちやくしょ","しやくしょ"],ans:3,mean:"市の行政機関／kantor pemerintah kota"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"歩道橋",ch:["ほどうはし","ほこうきょう","ほどうばし","ほどうきょう"],ans:3,mean:"歩行者専用の橋／jembatan penyeberangan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"差出人",ch:["さしだしにん","さしだしじん","さしだしひと","さだしにん"],ans:0,mean:"手紙・荷物を送る人／pengirim"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"役員",ch:["やくにん","やくいん","やくしゃ","えきいん"],ans:1,mean:"組織の重要な役割の人／pengurus, pejabat"}
+]},
+"w2d5":{title:"5日目",titleId:"Hari 5",topic:"病院",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"受験：試験（　）こと",sub:null,ch:["に受かる（lulus ujian）","を受ける（mengikuti ujian）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"骨折：骨が（　）こと",sub:null,ch:["まがる（membengkok）","おれる（patah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"婦人：（　）",sub:null,ch:["女の人（wanita）","おくさん（istri orang lain）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"教科書：（　）本",sub:null,ch:["字を調べる（mencari kata）","授業で使う（dipakai di kelas）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"受信：メールなどを（　）こと",sub:null,ch:["おくる（mengirim）","もらう（menerima）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"何か顔に（　）よ。",sub:null,ch:["付いています（menempel）","向いています（menghadap）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"定規やコンパスで（　）をかく。",sub:null,ch:["図形（bangun datar）","形式（format/formalitas）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ちらかった部屋を（　）。",sub:null,ch:["受付ける（menerima）","片付ける（merapikan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"人形",sub:null,ch:["にんげん","じんこう","じんけい","にんぎょう"],ans:3,mean:"boneka"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"折り紙",sub:null,ch:["ちりがみ","おりがみ","はりがみ","とりがみ"],ans:1,mean:"origami, seni melipat kertas"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"外科",sub:null,ch:["げか","がか","ほか","がいか"],ans:0,mean:"bagian bedah (rumah sakit)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"骨",sub:null,ch:["はね","こね","ほね","むね"],ans:2,mean:"tulang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かたち の正しい漢字は？",sub:null,ch:["線","形","面","点"],ans:1,mean:"形＝姿・形状／bentuk"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"じびか の正しい漢字は？",sub:null,ch:["目鼻科","耳鼻科","耳目科","目耳科"],ans:1,mean:"耳鼻科＝耳と鼻の診療科／THT (Telinga Hidung Tenggorokan)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"うせつ の正しい漢字は？",sub:null,ch:["右折","左折","石折","各折"],ans:0,mean:"右折＝右に曲がること／belok kanan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しゅふ の正しい漢字は？",sub:null,ch:["夫婦","王婦","玉婦","主婦"],ans:3,mean:"主婦＝家事をする女性／ibu rumah tangga"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"受験",ch:["うけけん","じゅけん","じゅけい","じゅうけん"],ans:1,mean:"試験を受けること／mengikuti ujian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"骨折",ch:["こっせつ","こつおり","ほねおり","こっせん"],ans:0,mean:"骨が折れること／patah tulang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"受付",ch:["うけつけ","じゅふ","じゅつけ","うけづけ"],ans:0,mean:"来客を受け入れる場所／resepsionis, loket"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"教科書",ch:["きょうしょ","きょうかほん","きょうかしょ","きょかしょ"],ans:2,mean:"授業で使う本／buku pelajaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"整形外科",ch:["せいけいがいか","せいけいかか","せいけいげか","せいかいげか"],ans:2,mean:"骨・関節の科／ortopedi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"産婦人科",ch:["さんぷじんか","さんぶじんか","さんふじんか","さんふにんか"],ans:2,mean:"出産・婦人病の科／obstetri dan ginekologi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"図形",ch:["とけい","ずけい","づけい","とかい"],ans:1,mean:"幾何学的な形／bangun geometri"}
+]},
+"w2d6":{title:"6日目",titleId:"Hari 6",topic:"困ったときは",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"故障：（　）",sub:null,ch:["こわれている（rusak）","しまっている（tutup）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"伝言：（　）",sub:"メッセージ＝message／マッサージ＝massage",ch:["メッセージ（pesan）","マッサージ（pijat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"救急車：（　）車",sub:null,ch:["病人やけが人を運ぶ（mengangkut orang sakit/cedera）","パトロールする（berpatroli）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"消防車：（　）車",sub:null,ch:["病気を防ぐ（mencegah penyakit）","火事を消す（memadamkan kebakaran）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"故Aさん：（　）Aさん",sub:null,ch:["けがをした（terluka）","なくなった（meninggal dunia）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"消費：（　）",sub:null,ch:["食品に使うお金（uang untuk bahan makanan）","使ってしまうこと（menghabiskan/mengkonsumsi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"みなさんに、よろしく（　）ください。",sub:null,ch:["お伝え（sampaikan）","お願い（tolong）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"将来（　）になりたい。",sub:null,ch:["警官（polisi）","警察（kepolisian）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"救う",sub:null,ch:["すくう","つくう","きゅう","こう"],ans:0,mean:"menyelamatkan, menolong"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"消える",sub:null,ch:["もえる","けえる","きえる","こえる"],ans:2,mean:"padam, menghilang"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"警察",sub:null,ch:["けいさつ","けんさつ","かいさつ","けいさい"],ans:0,mean:"kepolisian"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"防ぐ",sub:null,ch:["かせぐ","ふせぐ","ふさぐ","いそぐ"],ans:1,mean:"mencegah, menangkal"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こまる の正しい漢字は？",sub:null,ch:["回る","因る","囚る","困る"],ans:3,mean:"困る＝困難な状況になる／kerepotan, dalam kesulitan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"じこ の正しい漢字は？",sub:null,ch:["事枚","事救","事改","事故"],ans:3,mean:"事故＝アクシデント／kecelakaan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"てつだう の正しい漢字は？",sub:null,ch:["手助う","手伝う","手替う","手救う"],ans:1,mean:"手伝う＝助ける／membantu"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"よぼう の正しい漢字は？",sub:null,ch:["矛防","呼防","予防","了防"],ans:2,mean:"予防＝病気などを防ぐこと／pencegahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"消防",ch:["けしぼう","しょうぼ","しょうほう","しょうぼう"],ans:3,mean:"火事を消すこと・機関／pemadam kebakaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"救急車",ch:["すくいしゃ","きゅうきゅうか","きゅうきゅうしゃ","きゅうしゃ"],ans:2,mean:"病人やけが人を運ぶ車／ambulans"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"警察",ch:["かいさつ","けいさつ","けいさい","けんさつ"],ans:1,mean:"法律を守る機関／kepolisian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"故障",ch:["こしょ","こしょう","こじょう","こそう"],ans:1,mean:"機械などが壊れること／kerusakan mesin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"伝言",ch:["でんげん","でんこと","つたごん","でんごん"],ans:3,mean:"誰かに言葉を伝えること／pesan titipan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"予防",ch:["よぼ","よほう","よぼう","よふう"],ans:2,mean:"病気などを防ぐこと／pencegahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"消費",ch:["しょうひ","けしひ","しょうぴ","しょうび"],ans:0,mean:"使ってなくなること／konsumsi, pengeluaran"}
+]},
+"w2d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"ご協力ありがとうございます。[協力]の読みは？",sub:null,ch:["きゅうりょく","きょうりょく","こうりょく","こうりゃく"],ans:1,mean:"kerjasama, bantuan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"日本語がわからなくて困っています。[困って]の読みは？",sub:null,ch:["くまって","こまって","よわって","まいって"],ans:1,mean:"dalam kesulitan, kebingungan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"手伝ってくれませんか。[手伝って]の読みは？",sub:null,ch:["たすけって","てつだって","ことづかって","つたえって"],ans:1,mean:"membantu"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"美術館に絵を見に行きました。[美術館]の読みは？",sub:null,ch:["ぶじゅつかん","ぎじゅつかん","びじゅつかん","しゅじゅつかん"],ans:2,mean:"museum seni"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"空港は空の港です。[空港]の読みは？",sub:null,ch:["くうこう","くうきょう","こうきょう","こうこう"],ans:0,mean:"bandara"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"京都に金閣寺という有名なお寺があります。[寺]の読みは？",sub:null,ch:["じ","ぎ","に","ち"],ans:0,mean:"kuil, vihara"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"地震に備えていろいろなことをしています。[備えて]の読みは？",sub:null,ch:["むかえて","そろえて","おさえて","そなえて"],ans:3,mean:"mempersiapkan diri"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"インフルエンザを予防する。[予防]の読みは？",sub:null,ch:["ゆうぼう","ようぼう","ゆぼう","よぼう"],ans:3,mean:"pencegahan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"消しゴムを貸してくれませんか。[貸して]の読みは？",sub:null,ch:["きして","けして","かして","さして"],ans:2,mean:"meminjamkan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"危ないですから、黄色い線の内側に下がってお待ちください。[内側]の読みは？",sub:null,ch:["うちがわ","ないがわ","そとがわ","うしがわ"],ans:0,mean:"sisi dalam"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"友達を助けるのはあたりまえのことです。[あたりまえ]の正しい漢字は？",sub:null,ch:["光たり前","当たり前","満たり前","面たり前"],ans:1,mean:"当たり前＝普通のこと／wajar, sudah semestinya"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"富士山のかたちは美しい。[かたち]の正しい漢字は？",sub:null,ch:["形","骨","様","煙"],ans:0,mean:"形＝姿・形状／bentuk"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"ただ今、じゅんびちゅうです。[じゅんびちゅう]の正しい漢字は？",sub:null,ch:["予約中","営業中","閉店中","準備中"],ans:3,mean:"準備中＝準備しているところ／sedang persiapan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"さいふをひろったので、けいさつにとどけます。[けいさつ]の正しい漢字は？",sub:null,ch:["交番","消防","警察","観光"],ans:2,mean:"警察＝法律を守る機関／kepolisian"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"（　）駅では禁煙となっております。",sub:"この駅という意味の言葉は？/ Kata yang berarti stasiun ini?",ch:["本","今","御","当"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"この電車は（　）席、指定です。",sub:"すべての席が指定席のとき？/ Saat semua kursi adalah kursi reservasi?",ch:["満","空","全","次"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"交差点（　）に車を止めてはいけません。",sub:"交差点の中は？/ Di dalam persimpangan?",ch:["向","側","線","内"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"産婦人（　）の受付をする。",sub:"産婦人科の科は？/ Kata untuk bagian/departemen?",ch:["科","化","係","局"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"私はA（　）に賛成です。",sub:"提案・アイデアを指す言葉は？/ Kata untuk usulan/ide?",ch:["番","券","案","段"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"この町の人口は（　）20万人です。",sub:"だいたいという意味は？/ Kata yang berarti kira-kira?",ch:["各","現","過","約"],ans:3}
+]}
+    }
+  },
+  "w3": {
+    label: "第3週",
+    topic: "つかう",
+    days: {
+"w3d1":{title:"1日目",titleId:"Hari 1",topic:"要冷蔵",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"要冷蔵：冷蔵する必要が（　）",sub:null,ch:["ある（perlu）","ない（tidak perlu）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お召し上がりください：（　）",sub:null,ch:["食べてください（silakan dimakan）","入ってください（silakan masuk）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ご存じですか：（　）",sub:null,ch:["持っていますか（apakah punya?）","知っていますか（apakah tahu?）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"冷凍食品：（　）食品",sub:null,ch:["ひえた（didinginkan）","こおった（dibekukan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"車庫：車を（　）ところ",sub:null,ch:["しまうところ（menyimpan）","点検するところ（memeriksa）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"必ず買ってきてと言われたら（　）買ってこなければならない。",sub:null,ch:["一番最初に（pertama kali）","忘れずに（jangan lupa）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"熱いですから、少し（　）お飲みください。",sub:null,ch:["冷めて（biarkan dingin）","冷まして（dinginkan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（　）がんばったら合格した。",sub:null,ch:["必死に（dengan sekuat tenaga）","重要に（dengan penting）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"保存",sub:null,ch:["ほじょん","ほぞん","ほうぞん","ほうじょん"],ans:1,mean:"penyimpanan, pengawetan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"冷える",sub:null,ch:["ふえる","さえる","ひえる","れえる"],ans:2,mean:"mendingin, menjadi dingin"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"必ず",sub:null,ch:["ならかず","からなず","なからず","かならず"],ans:3,mean:"pasti, selalu, tanpa gagal"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"凍る",sub:null,ch:["とうる","こうる","こおる","こごる"],ans:2,mean:"membeku"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"つめたい の正しい漢字は？",sub:null,ch:["凍たい","召たい","冷たい","蔵たい"],ans:2,mean:"冷たい＝温度が低い／dingin"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"いらない の正しい漢字は？",sub:null,ch:["不らない","知らない","要らない","重らない"],ans:2,mean:"要らない＝必要ない／tidak perlu"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きんこ の正しい漢字は？",sub:null,ch:["銀行","銀庫","金行","金庫"],ans:3,mean:"金庫＝お金や貴重品を入れる箱／brankas"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぞんじません の正しい漢字は？",sub:null,ch:["存じません","在じません","信じません","蔵じません"],ans:0,mean:"存じません＝知りません（丁寧）／tidak tahu (sopan)"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"要冷蔵",ch:["ようれいぞう","ようれいざ","ようれぞう","ようれいぞ"],ans:0,mean:"冷蔵が必要／perlu disimpan di kulkas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"冷凍庫",ch:["れいとこ","れいとうこ","れいとうく","れとうこ"],ans:1,mean:"食品を凍らせる場所／freezer"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"冷蔵庫",ch:["れいぞうく","れぞうこ","れいぞこ","れいぞうこ"],ans:3,mean:"食品を冷やして保存する場所／kulkas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"保存",ch:["ほそん","ほざん","ほじょん","ほぞん"],ans:3,mean:"食品などを保つこと／penyimpanan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"必要",ch:["ひっよう","ひつよ","ひつよう","ひよう"],ans:2,mean:"なくてはならない／perlu"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"車庫",ch:["しゃく","くるまこ","しゃご","しゃこ"],ans:3,mean:"車をしまう場所／garasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"必死",ch:["ひしつ","ひつし","ひっし","ひくし"],ans:2,mean:"力のかぎりがんばること／mati-matian"}
+]},
+"w3d2":{title:"2日目",titleId:"Hari 2",topic:"消費期限",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"製造年月日：この日に（　）",sub:null,ch:["うられた（dijual）","つくられた（dibuat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"消費期限：この日まで（　）",sub:null,ch:["保存してもいい（boleh disimpan）","保存してはいけない（tidak boleh disimpan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"賞味期限：この日まで（　）",sub:null,ch:["食べてはいけない（tidak boleh dimakan）","おいしく食べられる（enak dimakan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"常温で保存：冷蔵庫に（　）",sub:null,ch:["入れなくていい（tidak perlu masuk kulkas）","入れなければいけない（harus masuk kulkas）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"期間限定：その期間（　）",sub:null,ch:["以外（selain waktu itu）","だけ（hanya pada waktu itu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"同窓会の（　）を集める。",sub:null,ch:["食費（biaya makan）","会費（iuran）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"優勝の（　）は10万円の旅行券です。",sub:null,ch:["賞品（hadiah lomba）","商品（produk/barang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"毎日会社や学校へ通う人は（　）が便利で得です。",sub:null,ch:["乗車券（tiket naik）","定期券（kartu langganan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"温かい",sub:null,ch:["やらわかい","あかたかい","やわらかい","あたたかい"],ans:3,mean:"hangat"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"限る",sub:null,ch:["かにる","かぎる","かみる","かげる"],ans:1,mean:"membatasi, terbatas pada"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"造る",sub:null,ch:["つくる","こくる","めくる","ちくる"],ans:0,mean:"membuat, memproduksi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"消費者",sub:null,ch:["そうひしゃ","しょうひしゃ","ちょうひしゃ","しゅうひしゃ"],ans:1,mean:"konsumen"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おんど の正しい漢字は？",sub:null,ch:["温席","温度","温渡","温庫"],ans:1,mean:"温度＝温かさの程度／suhu"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"せいひん の正しい漢字は？",sub:null,ch:["表品","製品","裏品","袋品"],ans:1,mean:"製品＝工場で作られた物／produk"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ほうほう の正しい漢字は？",sub:null,ch:["万去","万法","方去","方法"],ans:3,mean:"方法＝やり方／cara, metode"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ちょうき の正しい漢字は？",sub:null,ch:["長期","中期","短期","満期"],ans:0,mean:"長期＝長い期間／jangka panjang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"消費期限",ch:["しょうひきかん","しょうひきげん","しょうひきいん","しょうびきげん"],ans:1,mean:"食べられる期限／batas waktu konsumsi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"賞味期限",ch:["しょうみきかん","しょうみきげん","しょうみきいん","しょうびきげん"],ans:1,mean:"おいしく食べられる期限／tanggal kadaluarsa"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"製造",ch:["せいとう","せいぞう","せとう","せいぞ"],ans:1,mean:"工場で作ること／pembuatan, manufaktur"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"常温",ch:["じょうおど","じょうんど","つねおん","じょうおん"],ans:3,mean:"普通の室温／suhu ruangan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"期間",ch:["きがん","きかん","きかい","きけん"],ans:1,mean:"時間的な幅／periode, jangka waktu"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"定期券",ch:["ていきけい","ていきかん","ていきけん","じょうきけん"],ans:2,mean:"決まった期間乗れるきっぷ／kartu langganan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"賞品",ch:["しょうぴん","しょうひん","しょうびん","しょひん"],ans:1,mean:"賞としてもらう品物／hadiah lomba"}
+]},
+"w3d3":{title:"3日目",titleId:"Hari 3",topic:"食品",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"混雑：（　）ようす",sub:null,ch:["わけがわからない（membingungkan）","人などでいっぱいの（penuh orang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"発表：（　）",sub:null,ch:["みんなに知らせること（memberitahu semua orang）","出発の時刻を書いたもの（jadwal keberangkatan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"田中君の席は私の（　）です。",sub:null,ch:["後ろ（belakang）","裏（balik/belakang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"データをグラフに（　）。",sub:null,ch:["現す（menampilkan）","表す（mengekspresikan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"カンガルーのおなかには（　）がある。",sub:null,ch:["箱（kotak）","袋（kantong）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"オリンピックの（　）にえらばれる。",sub:null,ch:["代表（perwakilan）","表面（permukaan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"パンを（　）。",sub:null,ch:["焼く（memanggang）","焼ける（terbakar/matang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"足袋を（　）。",sub:null,ch:["かぶる（mengenakan di kepala）","はく（mengenakan di kaki）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"混ぜる",sub:null,ch:["まぜる","もぜる","なぜる","ねぜる"],ans:0,mean:"mencampur, mengaduk"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"牛乳",sub:null,ch:["にゅうぎゅう","ぎゅうにゅう","にゅうぎょう","ぎょうにょう"],ans:1,mean:"susu sapi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"小麦粉",sub:null,ch:["こむりこ","こめぎこ","きなこ","こむぎこ"],ans:3,mean:"tepung terigu"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"手袋",sub:null,ch:["おび","たぶくろ","たび","てぶくろ"],ans:3,mean:"sarung tangan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"たまご の正しい漢字は？",sub:null,ch:["卵","卵","貝","卵"],ans:0,mean:"卵＝たまご／telur"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おもて の正しい漢字は？",sub:null,ch:["表","裏","面","点"],ans:0,mean:"表＝前面・表側／depan, permukaan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"さます の正しい漢字は？",sub:null,ch:["空ます","温ます","冷ます","凍ます"],ans:2,mean:"冷ます＝温度を下げる／mendinginkan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ざいりょう の正しい漢字は？",sub:null,ch:["材科","林料","林科","材料"],ans:3,mean:"材料＝料理などに使う素材／bahan-bahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"混雑",ch:["こんさく","こんさつ","こんざん","こんざつ"],ans:3,mean:"人や車が多くてごちゃごちゃ／keramaian, kemacetan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"発表",ch:["はつひょう","はつひょ","はっぴょう","はっぴょ"],ans:2,mean:"みんなに知らせること／pengumuman, presentasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"代表",ch:["だひょう","たいひょう","だいひょう","だいひょ"],ans:2,mean:"グループを代わりに表す人／perwakilan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"材料",ch:["ざいりょう","ざりょう","ざいりょ","さいりょう"],ans:0,mean:"料理などに使う素材／bahan-bahan, material"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"牛乳",ch:["にゅうぎゅう","ぎゅうにゅう","ぎゅうにゅ","ぎゅにゅう"],ans:1,mean:"牛のミルク／susu sapi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"小麦粉",ch:["こめぎこ","こむぎこな","こむこ","こむぎこ"],ans:3,mean:"パンやケーキに使う粉／tepung terigu"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"表面",ch:["ひょうおもて","ひょうめい","おもてめん","ひょうめん"],ans:3,mean:"物の外側の面／permukaan"}
+]},
+"w3d4":{title:"4日目",titleId:"Hari 4",topic:"レシピ",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"留学：（　）こと",sub:null,ch:["卒業できない（tidak bisa lulus）","外国へ勉強に行く（belajar ke luar negeri）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"用件：（　）こと",sub:null,ch:["伝えたい（ingin disampaikan）","起こった（terjadi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"件名：電子メールなどの（　）",sub:null,ch:["アドレス（alamat）","タイトル（judul）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"保留：しばらく（　）こと",sub:null,ch:["外国に住む（tinggal di luar negeri）","そのままにする（dibiarkan dulu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"あの選手は（　）がうまい。",sub:null,ch:["予防（pencegahan）","守備（pertahanan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"重要な書類を（　）で送る。",sub:null,ch:["書留（surat tercatat）","快速（kereta cepat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"両親が出かけて、私は（　）をした。",sub:null,ch:["留守（menjaga rumah）","留守番（penjaga rumah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"約束や時間を（　）。",sub:null,ch:["限る（membatasi）","守る（menepati）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"再来週",sub:null,ch:["さんらいしゅう","さいらいしゅう","さっらいしゅう","さらいしゅう"],ans:3,mean:"minggu depannya lagi (dua minggu lagi)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"留守",sub:null,ch:["るしゅ","りゅす","るす","りゅしゅ"],ans:2,mean:"tidak ada di rumah, menjaga rumah"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"数える",sub:null,ch:["かじょえる","かずえる","かぞえる","かじゅえる"],ans:2,mean:"menghitung"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"部屋",sub:null,ch:["ぶや","へや","はや","ひや"],ans:1,mean:"kamar, ruangan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"じけん の正しい漢字は？",sub:null,ch:["試験","事故","実験","事件"],ans:3,mean:"事件＝問題になった出来事／kejadian, kasus"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こい の正しい漢字は？",sub:null,ch:["若い","農い","苦い","濃い"],ans:3,mean:"濃い＝色や味が強い／pekat, kuat (warna/rasa)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"うすい の正しい漢字は？",sub:null,ch:["薄い","博い","速い","快い"],ans:0,mean:"薄い＝色や味が弱い／tipis, encer"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぶぶん の正しい漢字は？",sub:null,ch:["倍分","部分","割分","陪分"],ans:1,mean:"部分＝全体の一部／bagian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"留学",ch:["るがく","りゅがく","りゅうがく","りゅうかく"],ans:2,mean:"外国で勉強すること／belajar di luar negeri"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"守備",ch:["しゅみ","しゅび","まもび","しゅうび"],ans:1,mean:"攻撃を防ぐこと／pertahanan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"書留",ch:["しょとめ","しょりゅう","かきとめ","かきとり"],ans:2,mean:"記録が残る郵便／surat tercatat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"留守番",ch:["るすひと","るすばな","りゅすばん","るすばん"],ans:3,mean:"家にいて番をすること／menjaga rumah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"部分",ch:["ぶわけ","ぶわけ","ぶぶん","ほうぶん"],ans:2,mean:"全体の一部／bagian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"再来週",ch:["またらいしゅう","さらいしゅう","さらしゅう","さいらいしゅう"],ans:1,mean:"来週の次の週／dua minggu lagi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"用件",ch:["ようけん","もちごと","ようごと","もちけん"],ans:0,mean:"伝えたいこと・要件／keperluan, urusan"}
+]},
+"w3d5":{title:"5日目",titleId:"Hari 5",topic:"コピー機・留守番電話",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"販売：（　）こと",sub:null,ch:["売ること（menjual）","買うこと（membeli）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"機会：（　）",sub:"マシン＝machine／チャンス＝chance",ch:["マシン（mesin）","チャンス（kesempatan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"返事：（　）こと",sub:null,ch:["よぶこと（memanggil）","こたえること（membalas）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"自動：（　）",sub:"オートマチック＝automatic／アスレチック＝athletic",ch:["オートマチック（otomatis）","アスレチック（atletik）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"飛行：（　）こと",sub:null,ch:["旅行すること（melakukan perjalanan）","空をとぶこと（terbang di langit）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"人口が（　）する。",sub:null,ch:["減量（mengurangi berat）","減少（berkurang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"おつりをもらうときは、（　）ボタンを押す。",sub:null,ch:["返却（pengembalian）","確認（konfirmasi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"甘くしたいので砂糖を（　）する。",sub:null,ch:["増量（menambah jumlah）","増加（bertambah）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"冷水",sub:null,ch:["おひや","りょうすい","れいすい","おみず"],ans:3,mean:"air dingin"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"増える",sub:null,ch:["ほえる","ふえる","はえる","ひえる"],ans:2,mean:"bertambah, meningkat"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"減る",sub:null,ch:["はる","ふる","ひる","へる"],ans:2,mean:"berkurang, menurun"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"返す",sub:null,ch:["かいす","かえす","かれす","はずす"],ans:1,mean:"mengembalikan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こおり の正しい漢字は？",sub:null,ch:["水","永","氷","凍"],ans:3,mean:"氷＝固まった水／es"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ゆ の正しい漢字は？",sub:null,ch:["湯","場","揚","楊"],ans:3,mean:"湯＝熱い水／air panas"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きかい の正しい漢字は？",sub:null,ch:["自動","販売","機合","機械"],ans:0,mean:"機械＝エンジンや装置／mesin"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"りょう の正しい漢字は？",sub:null,ch:["重","量","黒","里"],ans:1,mean:"量＝多さ・分量／jumlah, kuantitas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"販売",ch:["はんばえ","はんばい","はんめい","はいばん"],ans:1,mean:"売ること／penjualan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"返却",ch:["かえしきゃく","へんきく","へんきゃく","へんかく"],ans:2,mean:"借りた物を返すこと／pengembalian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"増加",ch:["そうか","ぞうが","ぞうか","ぞか"],ans:2,mean:"数が増えること／penambahan, pertambahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"減少",ch:["げんすく","げんしょ","げんしょう","へんしょう"],ans:2,mean:"数が減ること／pengurangan, penurunan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"機械",ch:["きかえ","きかい","きけい","きがい"],ans:1,mean:"エンジンや装置／mesin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自動",ch:["じどお","じとう","じどう","しどう"],ans:2,mean:"自然に動くこと／otomatis"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"返事",ch:["へんじ","へんこと","かえしごと","かえじ"],ans:0,mean:"こたえること／balasan, jawaban"}
+]},"w3d6":{title:"6日目",titleId:"Hari 6",topic:"携帯電話",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"接続：（　）こと",sub:null,ch:["つながること（terhubung）","つづくこと（berlanjut）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"完全：（　）",sub:"パーフェクト＝perfect／セーフティ＝safety",ch:["パーフェクト（sempurna）","セーフティ（keselamatan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"面接：（　）会うこと",sub:null,ch:["入院中の人に（orang yang dirawat）","その人を知るために（untuk mengenal seseorang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"仕事の内容をノートに（　）。",sub:null,ch:["記録する（mencatat）","登録する（mendaftarkan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"医者の（　）にしたがう。",sub:null,ch:["案内（panduan）","指示（instruksi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ラジオ番組を（　）。",sub:null,ch:["録音する（merekam suara）","録画する（merekam video）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"「3時に駅に着きます。」「（　）です。」",sub:null,ch:["了解（mengerti/oke）","理解（memahami）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"本日の営業は（　）しました。",sub:null,ch:["完了（selesai）","終了（berakhir）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"登山",sub:null,ch:["とうざん","とざん","とうさん","とさん"],ans:1,mean:"mendaki gunung"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"戻る",sub:null,ch:["もどる","まどる","おとる","かえる"],ans:0,mean:"kembali (ke tempat semula)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"接続",sub:null,ch:["けいぞく","せっそく","けいそく","せつぞく"],ans:3,mean:"koneksi, sambungan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"完了",sub:null,ch:["わんりょう","かんりょう","げんりょう","しゅうりょう"],ans:1,mean:"selesai, penyelesaian"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しめす の正しい漢字は？",sub:null,ch:["指す","差す","示す","消す"],ans:2,mean:"示す＝指示する・表す／menunjukkan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"のぼる の正しい漢字は？",sub:null,ch:["断る","折る","降る","登る"],ans:3,mean:"登る＝上へ行く／mendaki, naik"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ひょうじ の正しい漢字は？",sub:null,ch:["表現","指示","消費","表示"],ans:3,mean:"表示＝画面に出すこと／tampilan, indikasi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"とうろく の正しい漢字は？",sub:null,ch:["登録","当録","登録","当緑"],ans:0,mean:"登録＝名前などを記録すること／pendaftaran, registrasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"接続",ch:["せっずく","せつぞく","せっそく","せつぞく"],ans:1,mean:"つながること／koneksi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"録音",ch:["ろくおん","ろくいん","ろおん","ろくけん"],ans:0,mean:"音を記録すること／rekaman suara"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"指示",ch:["しめじ","ゆびじ","しめし","しじ"],ans:3,mean:"指導すること／instruksi, petunjuk"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"登録",ch:["とうろく","とうりょく","のぼりろく","とろく"],ans:0,mean:"名前などを記録すること／pendaftaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"完了",ch:["かんれょう","かんりょ","かりょう","かんりょう"],ans:3,mean:"終わること／selesai"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"面接",ch:["めんせつ","めんせっ","めんせい","めんさつ"],ans:0,mean:"直接会って話すこと／wawancara"}
+]},
+"w3d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"自動販売機で飲み物を買う。[自動販売機]の読みは？",sub:null,ch:["じどうはんばいき","じどうへんばいき","じどうはんまいき","じどうへんまいき"],ans:0,mean:"mesin penjual otomatis"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"なるべく早くお召し上がりください。[お召し上がり]の読みは？",sub:null,ch:["おみしあがり","おねしあがり","おめしあがり","おむしあがり"],ans:2,mean:"silakan makan/minum (bentuk sopan)"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"日本語の教材をさがす。[教材]の読みは？",sub:null,ch:["きょうざい","きゅうざい","きょうぜい","きゅうぜい"],ans:0,mean:"bahan ajar, materi pembelajaran"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"そこに粉を入れて混ぜます。[粉]の読みは？",sub:null,ch:["すな","こめ","むぎ","こな"],ans:3,mean:"tepung, bubuk"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"おべんとうに卵焼きが入っている。[卵焼き]の読みは？",sub:null,ch:["たなごやき","たまごまき","たなごまき","たまごやき"],ans:3,mean:"telur dadar (masakan Jepang)"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"交通ルールを守りましょう。[守り]の読みは？",sub:null,ch:["なもり","まもり","もまり","もなり"],ans:1,mean:"menjaga, mematuhi"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"数を数えてください。[数]の読みは？（かず）",sub:null,ch:["かぞ","くず","かず","しゅう"],ans:2,mean:"jumlah, angka"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"お湯を入れて、3分待てば、できあがりです。[湯]の読みは？",sub:null,ch:["ゆ","よ","や","い"],ans:0,mean:"air panas"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"録音された伝言を再生する。[再生]の読みは？",sub:null,ch:["せいしょう","さいせい","せいせい","さいしょう"],ans:1,mean:"memutar ulang, memainkan kembali"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"冷房が強すぎます。[冷房]の読みは？",sub:null,ch:["れいぼう","れいぞう","れいとう","れいどう"],ans:0,mean:"AC, pendingin ruangan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"図書館に本をかえす。[かえす]の正しい漢字は？",sub:null,ch:["辺す","帰す","替す","返す"],ans:3,mean:"返す＝借りた物を戻す／mengembalikan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"ボクサーは試合前にげんりょうする。[げんりょう]の正しい漢字は？",sub:null,ch:["減量","消量","増量","限量"],ans:0,mean:"減量＝体重を減らすこと／menurunkan berat badan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"使い終わったら、もとの場所にもどしてください。[もどして]の正しい漢字は？",sub:null,ch:["直して","返して","存して","戻して"],ans:3,mean:"戻す＝元の場所に返す／mengembalikan ke tempat semula"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"今日はここまで。つづきはまた来週。[つづき]の正しい漢字は？",sub:null,ch:["付き","続き","向き","次き"],ans:1,mean:"続き＝続くこと・残り／lanjutan"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"交通（　）はいくらですか。",sub:"交通のためにかかるお金は？/ Biaya untuk transportasi?",ch:["金","代","料","費"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"この資料を30（　）コピーしてください。",sub:"書類を数えるときの単位は？/ Satuan menghitung dokumen?",ch:["束","部","組","点"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"紙（　）にお入れしましょうか。",sub:"紙でできた入れ物は？/ Wadah yang terbuat dari kertas?",ch:["袋","庫","材","製"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"（　）冷凍と書いてあります。",sub:"必ずという意味の漢字は？/ Kanji yang berarti harus/wajib?",ch:["必","限","要","保"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"（　）ダイヤルボタンを押す。",sub:"もう一度という意味の漢字は？/ Kanji yang berarti sekali lagi?",ch:["濃","再","薄","伝"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"短（　）留学をする。",sub:"短い時間・期間を表す漢字は？/ Kanji yang berarti jangka pendek?",ch:["機","気","期","式"],ans:2}
+]}
+
+    }
+  },
+  "w4": {
+    label: "第4週",
+    topic: "かう",
+    days: {
+"w4d1":{title:"1日目",titleId:"Hari 1",topic:"日用品",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"灯油：（a. 料理　b. ヒーターなど）に使う油",sub:null,ch:["a. 料理（memasak）","b. ヒーターなど（pemanas dll）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"個人：（a. ひとりひとりの　b. なくなった）人",sub:null,ch:["a. ひとりひとりの（masing-masing）","b. なくなった（meninggal）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"口紅：（a. 食品　b. 化粧品）のひとつ",sub:null,ch:["a. 食品（makanan）","b. 化粧品（kosmetik）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"食塩：料理（a. を入れる　b. に味をつける）もの",sub:null,ch:["a. を入れる（dimasukkan ke masakan）","b. に味をつける（untuk memberi rasa）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"海岸で（a. 砂　b. 粉）遊びをする。",sub:null,ch:["a. 砂（pasir）","b. 粉（tepung）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"80円の切手を10（a. 枚　b. 部）ください。",sub:null,ch:["a. 枚（lembar）","b. 部（eksemplar）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"1（a. 個　b. 固）200円のりんご",sub:null,ch:["a. 個（buah/biji）","b. 固（padat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"図書館で本を2（a. 本　b. 冊）借りました。",sub:null,ch:["a. 本（satuan panjang）","b. 冊（jilid/buku）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"石油",sub:null,ch:["とうゆ","しょうゆ","せきゆ","いしゆ"],ans:2,mean:"minyak bumi, petroleum"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"砂糖",sub:null,ch:["さとう","しゃとう","こしょう","こむぎ"],ans:0,mean:"gula"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"個人",sub:null,ch:["ことな","こにん","こびと","こじん"],ans:3,mean:"individu, perorangan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"緑",sub:null,ch:["みのり","みどり","みろり","みだり"],ans:1,mean:"hijau"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こうちゃ の正しい漢字は？",sub:null,ch:["赤茶","黒茶","紅茶","黄茶"],ans:2,mean:"紅茶＝黒いお茶／teh (hitam)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あぶら の正しい漢字は？",sub:null,ch:["由","畑","柚","油"],ans:3,mean:"油＝油脂／minyak"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しお の正しい漢字は？",sub:null,ch:["酢","塩","酒","乳"],ans:1,mean:"塩＝食塩／garam"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぶすう の正しい漢字は？",sub:null,ch:["冊数","部数","枚数","個数"],ans:1,mean:"部数＝冊数・発行数／jumlah eksemplar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"砂糖",ch:["すなとう","さとう","さとう","しゃとう"],ans:1,mean:"料理に使う甘い調味料／gula"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"食塩",ch:["しょくえに","しょくえい","しょくえん","しょくいん"],ans:2,mean:"料理に使う塩／garam meja"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"石油",ch:["せきゆう","せきゆ","いしゆ","せいゆ"],ans:1,mean:"燃料として使う油／minyak bumi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"緑茶",ch:["りょくさ","りょくちゃ","りょうちゃ","みどりちゃ"],ans:1,mean:"日本のお茶／teh hijau"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"紅茶",ch:["こうさ","くちべに","こうちゃ","べにちゃ"],ans:2,mean:"紅色のお茶／teh hitam"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"個人",ch:["ひとり","こひと","こじん","こにん"],ans:2,mean:"一人の人／individu"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"枚数",ch:["まいすう","ひらすう","まいさ","まいかず"],ans:0,mean:"紙などを数える単位の数／jumlah lembar"}
+]},
+"w4d2":{title:"2日目",titleId:"Hari 2",topic:"広告メール",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"広告：商品などについての（a. お知らせ　b. お断り）",sub:null,ch:["a. お知らせ（pemberitahuan）","b. お断り（penolakan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"1割引：10%（a. 高くなる　b. 安くなる）こと",sub:null,ch:["a. 高くなる（menjadi lebih mahal）","b. 安くなる（menjadi lebih murah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"窓ガラスが（a. 割る　b. 割れる）。",sub:null,ch:["a. 割る（memecahkan）","b. 割れる（pecah sendiri）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この店の（a. 本店　b. 当店）は東京にある。",sub:null,ch:["a. 本店（toko utama）","b. 当店（toko ini）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"卵とスープは1：3の（a. 割合　b. 材料）にします。",sub:null,ch:["a. 割合（perbandingan）","b. 材料（bahan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"毎度（a. ご利用　b. ご使用）ありがとうございます。",sub:null,ch:["a. ご利用（penggunaan layanan）","b. ご使用（penggunaan barang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. お払い　b. お支払い）方法をおえらびください。",sub:null,ch:["a. お払い（mengusir）","b. お支払い（pembayaran）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"その町の観光客は前の年の（a. 3割　b. 3倍）に増加した。",sub:null,ch:["a. 3割（30%）","b. 3倍（3 kali lipat）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"値下げ",sub:null,ch:["ねさげ","にさげ","ぬさげ","ちさげ"],ans:1,mean:"penurunan harga, diskon"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"商品",sub:null,ch:["しゅうひん","せいひん","しょうひん","そうひん"],ans:2,mean:"produk, barang dagangan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"払う",sub:null,ch:["あらう","わらう","はらう","ひろう"],ans:2,mean:"membayar"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"倍",sub:null,ch:["べい","ばい","まい","わり"],ans:1,mean:"kali lipat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"べんり の正しい漢字は？",sub:null,ch:["便別","便判","便利","便刑"],ans:2,mean:"便利＝使いやすい／praktis, mudah digunakan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ねだん の正しい漢字は？",sub:null,ch:["階段","値段","直段","相段"],ans:1,mean:"値段＝商品の価格／harga"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ししゃ の正しい漢字は？",sub:null,ch:["冬社","友社","皮社","支社"],ans:3,mean:"支社＝会社の支部／kantor cabang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こうこく の正しい漢字は？",sub:null,ch:["広各","広告","広局","広格"],ans:1,mean:"広告＝宣伝／iklan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"広告",ch:["こうこつ","こうごく","こうこう","こうこく"],ans:3,mean:"宣伝・お知らせ／iklan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"割引",ch:["わりひき","かつびき","わりびき","わりびく"],ans:2,mean:"値段を下げること／diskon"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"商品",ch:["そうひん","しょうぴん","しょうひん","しょうびん"],ans:2,mean:"売る物・製品／produk, barang dagangan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"値段",ch:["ねだん","あたい","ねたん","ちだん"],ans:0,mean:"商品の価格／harga"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"利用",ch:["りゆう","りもち","りつ","りよう"],ans:3,mean:"使うこと／penggunaan, memanfaatkan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"支払い",ch:["しはらえ","しいれ","しはらい","しはり"],ans:2,mean:"お金を払うこと／pembayaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"割合",ch:["わりごう","かつあい","わりあい","かつごう"],ans:2,mean:"比率・パーセント／perbandingan, persentase"}
+]},
+"w4d3":{title:"3日目",titleId:"Hari 3",topic:"通信販売",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"米国：（a. イギリス　b. アメリカ）",sub:null,ch:["a. イギリス（Inggris）","b. アメリカ（Amerika）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"税込：税金が（a. ふくまれている　b. ふくまれていない）",sub:null,ch:["a. ふくまれている（sudah termasuk pajak）","b. ふくまれていない（belum termasuk pajak）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"合格：試験に（a. 受かる　b. 受ける）",sub:null,ch:["a. 受かる（lulus）","b. 受ける（mengikuti ujian）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"残業：終わりの時間が過ぎても（a. 授業　b. 仕事）をすること",sub:null,ch:["a. 授業（pelajaran）","b. 仕事（pekerjaan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"道が（a. 組んでいる　b. 込んでいる）。",sub:null,ch:["a. 組んでいる（tersusun）","b. 込んでいる（macet/penuh）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"定価（a. 現金　b. 1万円）の商品が5千円でお求めになれます。",sub:null,ch:["a. 現金（tunai）","b. 1万円（harga asli 10.000 yen）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"銀行からお金を（a. 飛び出す　b. 振り込む）。",sub:null,ch:["a. 飛び出す（melompat keluar）","b. 振り込む（transfer uang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本語のクラスは初級、中級、（a. 上級　b. 高級）に分かれています。",sub:null,ch:["a. 上級（tingkat atas）","b. 高級（mewah）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"米",sub:null,ch:["まめ","むぎ","こめ","めし"],ans:2,mean:"beras, nasi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"税金",sub:null,ch:["ざいきん","ちょきん","しゃっきん","ぜいきん"],ans:3,mean:"pajak"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"小型",sub:null,ch:["こけい","こがた","しょうけい","おがた"],ans:1,mean:"ukuran kecil, tipe kecil"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"残業",sub:null,ch:["さんぎょう","せんぎょう","ざんぎょう","じゅんぎょう"],ans:2,mean:"kerja lembur"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かくやす の正しい漢字は？",sub:null,ch:["各安","格安","客安","額安"],ans:1,mean:"格安＝とても安い価格／harga sangat murah"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"のこる の正しい漢字は？",sub:null,ch:["戻る","登る","凍る","残る"],ans:3,mean:"残る＝余る・残存する／tersisa, tinggal"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ていか の正しい漢字は？",sub:null,ch:["定価","停過","定値","走過"],ans:0,mean:"定価＝決まった価格／harga tetap"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しょうひぜい の正しい漢字は？",sub:null,ch:["生費税","食費税","消費税","商費税"],ans:2,mean:"消費税＝買い物にかかる税金／pajak konsumsi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"税込",ch:["のうぜい","ぜいいれ","ぜいこ","ぜいこみ"],ans:3,mean:"税金が含まれている／sudah termasuk pajak"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"消費税",ch:["しょうひてい","しょうひぜ","しょうひぜい","しょひぜい"],ans:2,mean:"買い物にかかる税金／pajak konsumsi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"定価",ch:["ていね","じょうか","ていか","てかか"],ans:2,mean:"決まった値段／harga tetap"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"残業",ch:["ざんぎょう","さんぎょう","のこぎょう","ざんよう"],ans:0,mean:"時間外の仕事／kerja lembur"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"格安",ch:["かくやす","かくやし","こうやす","かくあん"],ans:0,mean:"とても安い値段／harga sangat murah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"高級",ch:["こうきゅう","たかきゅう","こきゅう","こうきゅ"],ans:0,mean:"品質が高い・高価な／mewah, berkualitas tinggi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"新型",ch:["しんかた","あたらがた","しんけい","しんがた"],ans:3,mean:"新しいタイプ・モデル／model baru"}
+]},
+"w4d4":{title:"4日目",titleId:"Hari 4",topic:"申込書",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"連休：（a. 休日が続いている　b. 電車が止まっている）こと",sub:null,ch:["a. 休日が続いている（hari libur berturut-turut）","b. 電車が止まっている（kereta berhenti）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"記入：（a. 袋に入れる　b. 書き入れる）こと",sub:null,ch:["a. 袋に入れる（dimasukkan ke kantong）","b. 書き入れる（mengisi, menuliskan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"祖父は（a. 高齢　b. 多齢）のため、一人で外出できません。",sub:null,ch:["a. 高齢（usia lanjut）","b. 多齢（banyak usia）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"税金を（a. 申告　b. 申込）する。",sub:null,ch:["a. 申告（melaporkan pajak）","b. 申込（mendaftar）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"犬を散歩に（a. 連れて行く　b. 持って行く）。",sub:null,ch:["a. 連れて行く（membawa/mengajak pergi）","b. 持って行く（membawa barang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"彼女はあまり仕事はできないが、（a. 性別　b. 性格）がいい。",sub:null,ch:["a. 性別（jenis kelamin）","b. 性格（kepribadian）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"新聞（a. 記事　b. 記号）を読む。",sub:null,ch:["a. 記事（artikel berita）","b. 記号（simbol, tanda）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"よろしくお願い（a. 申し上げます　b. 召し上がります）。",sub:null,ch:["a. 申し上げます（saya ucapkan dengan hormat）","b. 召し上がります（silakan makan/minum）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"例えば",sub:null,ch:["たたえば","とたえば","たとえば","こたえば"],ans:2,mean:"misalnya, contohnya"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"申込書",sub:null,ch:["しんこくしょ","もうしこみしょ","めしこみしょ","しんせいしょ"],ans:1,mean:"formulir pendaftaran"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"年齢",sub:null,ch:["れんれい","れんねい","ねんらい","ねんれい"],ans:3,mean:"usia, umur"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"二十歳",sub:null,ch:["はたち","はつか","はだち","ふつか"],ans:0,mean:"20 tahun (cara baca khusus)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"れんらく の正しい漢字は？",sub:null,ch:["連格","運格","連絡","運絡"],ans:2,mean:"連絡＝知らせること／menghubungi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きごう の正しい漢字は？",sub:null,ch:["信号","番号","記号","暗号"],ans:2,mean:"記号＝記すための印／simbol, tanda"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"にっき の正しい漢字は？",sub:null,ch:["日記","日時","日付","日気"],ans:0,mean:"日記＝毎日の出来事を書いたもの／buku harian"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"だんせい の正しい漢字は？",sub:null,ch:["個性","女性","中性","男性"],ans:3,mean:"男性＝おとこの人／laki-laki"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"申込書",ch:["もうしこみじょ","もうしこみがみ","しんこくしょ","もうしこみしょ"],ans:3,mean:"申し込みのための書類／formulir pendaftaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"年齢",ch:["ねんれい","としすう","ねんこう","ねんさい"],ans:0,mean:"年の数・いくつか／usia, umur"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"性別",ch:["しょうべつ","せいべつ","せいわけ","せべつ"],ans:1,mean:"男性か女性かの区別／jenis kelamin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"連絡",ch:["れんろく","れんきょく","れんらく","れんらっ"],ans:2,mean:"知らせること／menghubungi, kontak"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"記入",ch:["きにゅ","きにゅう","きかき","きいれ"],ans:1,mean:"書き入れること／mengisi formulir"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"高齢",ch:["たかれい","こうれい","こうれ","こうれん"],ans:1,mean:"年をとっていること／usia lanjut"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"連休",ch:["れんきゅう","つづきやすみ","れんやす","れんきゅ"],ans:0,mean:"続いた休日／hari libur panjang"}
+]},
+"w4d5":{title:"5日目",titleId:"Hari 5",topic:"荷物の配達",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"半額：（a. 5割合　b. 5割引）",sub:null,ch:["a. 5割合（50% perbandingan）","b. 5割引（diskon 50%）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"失望：（a. がっかり　b. びっくり）すること",sub:null,ch:["a. がっかり（kecewa）","b. びっくり（terkejut）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"代引き：（a. 代金が値引きされる　b. 品物と代金を交換する）こと",sub:null,ch:["a. 代金が値引きされる（harga dikurangi）","b. 品物と代金を交換する（bayar saat terima barang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"金額：（a. 値段　b. 合計）",sub:null,ch:["a. 値段（harga satuan）","b. 合計（total jumlah uang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"空港では（a. 小包　b. 手荷物）検査がある。",sub:null,ch:["a. 小包（paket kecil）","b. 手荷物（bagasi tangan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"サイズを（a. 両替　b. 交換）してください。",sub:null,ch:["a. 両替（menukar uang）","b. 交換（menukar barang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"商品が（a. 届く　b. 届ける）。",sub:null,ch:["a. 届く（sampai/tiba）","b. 届ける（mengantarkan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"地下鉄に（a. 着替える　b. 乗り換える）。",sub:null,ch:["a. 着替える（ganti pakaian）","b. 乗り換える（pindah kendaraan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"配る",sub:null,ch:["こばる","かばる","くばる","きばる"],ans:2,mean:"membagikan, mengirim"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"荷物",sub:null,ch:["にぶつ","かもつ","にもの","にもつ"],ans:3,mean:"barang bawaan, kargo"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"望む",sub:null,ch:["のぞむ","なごむ","ながむ","のどむ"],ans:0,mean:"mengharapkan, menginginkan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"配達",sub:null,ch:["そくたち","そくたつ","はいたち","はいたつ"],ans:3,mean:"pengiriman, pengantaran"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きぼう の正しい漢字は？",sub:null,ch:["予防","希望","記号","飛行"],ans:1,mean:"希望＝願い・望み／harapan, keinginan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"しんぱい の正しい漢字は？",sub:null,ch:["真配","心配","信配","気配"],ans:1,mean:"心配＝不安に思うこと／khawatir, cemas"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"じたく の正しい漢字は？",sub:null,ch:["御宅","私宅","自宅","小宅"],ans:2,mean:"自宅＝自分の家／rumah sendiri"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こうかん の正しい漢字は？",sub:null,ch:["交換","引換","取換","変換"],ans:0,mean:"交換＝取り替えること／pertukaran, menukar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"配達",ch:["はいだつ","はいたつ","はいたち","くばたつ"],ans:1,mean:"届けること／pengiriman, pengantaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"荷物",ch:["もつに","にもつ","かもつ","にぶつ"],ans:1,mean:"運ぶ物・届ける物／barang, kargo"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"受取人",ch:["うけとりにん","もらうひと","うけとるひと","うけとりじん"],ans:0,mean:"荷物を受け取る人／penerima"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"希望",ch:["きもう","きぼう","けいぼう","きほう"],ans:1,mean:"望み・願い／harapan, keinginan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"交換",ch:["こうかん","こかん","こうがん","きょうかん"],ans:0,mean:"取り替えること／pertukaran, menukar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自宅",ch:["みたく","じだく","じたく","じたっく"],ans:2,mean:"自分の家／rumah sendiri"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"不在",ch:["ふじゃい","ふざい","ふさい","ぶざい"],ans:1,mean:"家にいないこと／tidak ada di rumah"}
+]},
+"w4d6":{title:"6日目",titleId:"Hari 6",topic:"不在通知",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"不在：（a. ない　b. いない）",sub:null,ch:["a. ない（tidak ada）","b. いない（tidak ada orang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"通勤：仕事をする場所（a. に通う　b. を通る）こと",sub:null,ch:["a. に通う（pergi ke tempat kerja）","b. を通る（melewati）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"携帯電話：（a. 持ち運び　b. 折りたたみ）できる電話",sub:null,ch:["a. 持ち運び（bisa dibawa-bawa）","b. 折りたたみ（bisa dilipat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"衣類：（a. 着るもの　b. 書いたもの）",sub:null,ch:["a. 着るもの（pakaian）","b. 書いたもの（sesuatu yang ditulis）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この時間（a. 期　b. 帯）の電車は込みます。",sub:null,ch:["a. 期（periode）","b. 帯（zona waktu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"会社に（a. 働く　b. 勤める）。",sub:null,ch:["a. 働く（bekerja）","b. 勤める（bekerja di suatu tempat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本語が（a. 上手　b. 上達）した。",sub:null,ch:["a. 上手（pandai）","b. 上達（meningkat kemampuannya）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"電車が（a. 参ります　b. 届きます）。",sub:null,ch:["a. 参ります（datang・kereta hormat）","b. 届きます（sampai）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"預金",sub:null,ch:["ちゃきん","ちょきん","よきん","ゆきん"],ans:2,mean:"tabungan, deposito"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"現在",sub:null,ch:["ぜんざい","けんざい","せんざい","げんざい"],ans:3,mean:"sekarang, saat ini"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"参加",sub:null,ch:["さんこう","せんか","さんが","さんか"],ans:3,mean:"berpartisipasi, ikut serta"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"預ける",sub:null,ch:["さずける","あずける","たすける","あつける"],ans:1,mean:"menitipkan, menyimpan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ともだち の正しい漢字は？",sub:null,ch:["友達","友遠","友違","友過"],ans:0,mean:"友達＝仲良しの人／teman"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"まいる の正しい漢字は？",sub:null,ch:["配る","取る","参る","座る"],ans:2,mean:"参る＝行く・来る（謙譲語）／pergi/datang (bentuk sopan)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おび の正しい漢字は？",sub:null,ch:["衣","帯","服","袋"],ans:1,mean:"帯＝腰に巻くもの／ikat pinggang (kimono)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"とる の正しい漢字は？",sub:null,ch:["通る","最る","割る","取る"],ans:3,mean:"取る＝手に入れる／mengambil, mendapatkan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"不在",ch:["ふさい","ふざい","ぶざい","ふじゃい"],ans:1,mean:"家にいないこと／tidak ada di rumah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"通勤",ch:["つうごん","つうきん","かよいきん","とおきん"],ans:1,mean:"職場に通うこと／perjalanan ke tempat kerja"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"携帯電話",ch:["もちでんわ","けいたいほん","けいたいでんわ","けいたいでんわ"],ans:2,mean:"持ち運べる電話／ponsel, HP"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"衣類",ch:["きるい","ころも","いいる","いるい"],ans:3,mean:"着るものの総称／pakaian, busana"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"現在",ch:["ぜんざい","けんざい","げんさい","げんざい"],ans:3,mean:"今・このとき／sekarang, saat ini"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"参加",ch:["さんか","さんこう","せんか","さんが"],ans:0,mean:"加わること／berpartisipasi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"預ける",ch:["かずける","あずける","さずける","たずける"],ans:1,mean:"誰かに任せて保管してもらう／menitipkan"}
+]},
+"w4d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"合格の知らせによろこんだ。[合格]の読みは？",sub:null,ch:["ごかく","あいきゃく","ごうかく","こうかく"],ans:2,mean:"lulus, lolos"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"代金は銀行から振り込みます。[振り込み]の読みは？",sub:null,ch:["はりこみ","おりこみ","ふりこみ","ほりこみ"],ans:2,mean:"transfer uang"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"田中と申します。[申し]の読みは？",sub:null,ch:["もよおします","もおします","まうします","もうします"],ans:3,mean:"berkata (bentuk sopan rendah hati)"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"中級レベルの日本語の本をさがしています。[中級]の読みは？",sub:null,ch:["ちゅうきゅう","ちょうきゅう","じょうきゅう","しょうきゅう"],ans:0,mean:"tingkat menengah"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"米国に留学する。[米国]の読みは？",sub:null,ch:["まいこく","めいこく","べいこく","みいこく"],ans:2,mean:"Amerika Serikat"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"携帯電話は便利です。[便利]の読みは？",sub:null,ch:["びんり","べんり","ばんり","べんに"],ans:1,mean:"praktis, nyaman"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"品物が入荷したら、お知らせします。[入荷]の読みは？",sub:null,ch:["にゅうこ","にゅうに","にゅうこ","にゅうか"],ans:3,mean:"masuknya barang, stok baru"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"白い砂の上を歩きました。[砂]の読みは？",sub:null,ch:["しお","いし","たね","すな"],ans:3,mean:"pasir"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"紅茶にミルクを入れて飲む。[紅茶]の読みは？",sub:null,ch:["こうさ","ほんちゃ","こうちゃ","きっさ"],ans:2,mean:"teh hitam"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"支社に書類を郵送する。[支社]の読みは？",sub:null,ch:["ししゃ","ちしゃ","じしゃ","ぎしゃ"],ans:0,mean:"kantor cabang"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"バスの料金をはらう。[はらう]の正しい漢字は？",sub:null,ch:["去う","私う","仏う","払う"],ans:3,mean:"払う＝お金を出すこと／membayar"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"たくはいで送る。[たくはい]の正しい漢字は？",sub:null,ch:["配達","宅配","心配","速達"],ans:1,mean:"宅配＝自宅に届けること／pengiriman ke rumah"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"子どもを両親にあずける。[あずける]の正しい漢字は？",sub:null,ch:["届ける","受ける","預ける","続ける"],ans:2,mean:"預ける＝人に任せて保管してもらう／menitipkan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"このへんはみどりが少ない。[みどり]の正しい漢字は？",sub:null,ch:["縁","録","緑","線"],ans:2,mean:"緑＝グリーン／warna hijau"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"（　）休は旅行に行く予定だ。",sub:"休日が続く言葉は？/ Kata yang berarti hari libur panjang?",ch:["連","次","来","残"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"広（　）でセールを知る。",sub:"宣伝・お知らせを意味する言葉は？/ Kata yang berarti iklan?",ch:["告","例","記","込"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"定（　）の半額以下で買った。",sub:"値段・金額を意味する言葉は？/ Kata yang berarti harga?",ch:["割","値","価","達"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"消費（　）は何パーセントですか。",sub:"国に納めるお金を意味する言葉は？/ Kata yang berarti pajak?",ch:["税","性","歳","額"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"CDを何（　）持っていますか。",sub:"薄いものを数える言葉は？/ Kata satuan untuk benda tipis?",ch:["冊","枚","本","部"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"大（　）トラックが事故を起こした。",sub:"大きいサイズを意味する言葉は？/ Kata yang berarti ukuran besar?",ch:["形","倍","型","級"],ans:2}
+]}
+
+    }
+  },
+  "w5": {
+    label: "第5週",
+    topic: "かく",
+    days: {
+"w5d1":{title:"1日目",titleId:"Hari 1",topic:"メールを送る",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"遅刻：（a. 間に合う　b. 間に合わない）",sub:null,ch:["a. 間に合う（tepat waktu）","b. 間に合わない（terlambat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お礼：（a. ありがとう　b. ごめんなさい）という気持ち",sub:null,ch:["a. ありがとう（terima kasih）","b. ごめんなさい（maaf）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"失敗：（a. うまくいく　b. うまくいかない）こと",sub:null,ch:["a. うまくいく（berhasil）","b. うまくいかない（gagal）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"「ちょっと、お伺いしますが、駅はどちらでしょう」：（a. 聞きたい　b. 会いたい）",sub:null,ch:["a. 聞きたい（ingin bertanya）","b. 会いたい（ingin bertemu）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 涙　b. 汗）をかく。",sub:null,ch:["a. 涙（air mata）","b. 汗（keringat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"卒業式で（a. 記念　b. 記号）写真をとる。",sub:null,ch:["a. 記念（kenang-kenangan）","b. 記号（simbol）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お先に（a. 失礼です　b. 失礼します）。",sub:null,ch:["a. 失礼です（tidak sopan）","b. 失礼します（permisi duluan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"出席できなくて（a. 失望　b. 残念）です。",sub:null,ch:["a. 失望（kecewa berat）","b. 残念（sayang sekali, menyesal）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"笑顔",sub:null,ch:["ねがお","いがお","えがお","ほほえみ"],ans:2,mean:"wajah tersenyum"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"伺う",sub:null,ch:["いたがう","うかがう","いかがう","うたがう"],ans:1,mean:"mengunjungi, bertanya (bentuk sopan rendah hati)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"残念",sub:null,ch:["ざんねん","だんねん","ざんれん","だんれん"],ans:0,mean:"sayang sekali, menyesal"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"遅れる",sub:null,ch:["ちそれる","おそれる","ちくれる","おくれる"],ans:3,mean:"terlambat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"わらう の正しい漢字は？",sub:null,ch:["習う","洗う","払う","笑う"],ans:3,mean:"笑う＝にこにこする／tertawa, tersenyum"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おそい の正しい漢字は？",sub:null,ch:["伺い","笑い","遅い","失い"],ans:2,mean:"遅い＝スピードが遅い・時間が遅い／lambat, terlambat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"なみだ の正しい漢字は？",sub:null,ch:["混","汗","涙","湯"],ans:2,mean:"涙＝目から出る水／air mata"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ちこく の正しい漢字は？",sub:null,ch:["遅刻","時刻","予告","広告"],ans:0,mean:"遅刻＝決まった時間より遅く来ること／terlambat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"遅刻",ch:["ちこく","ちごく","おこく","ちこっく"],ans:0,mean:"時間に遅れること／terlambat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"失礼",ch:["しつれ","しつれい","しつらい","しっれい"],ans:1,mean:"礼儀に反すること／tidak sopan, permisi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"残念",ch:["ざんねん","だんねん","さんねん","ざんねい"],ans:0,mean:"思い通りにならず悲しいこと／sayang sekali"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"笑顔",ch:["しょうがん","えかお","えがお","わらいがお"],ans:2,mean:"笑った顔／wajah tersenyum"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"失敗",ch:["しつばい","しっぱえ","しっぱい","しっはい"],ans:2,mean:"うまくいかないこと／gagal, kegagalan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"記念",ch:["きねい","きなん","きれん","きねん"],ans:3,mean:"思い出に残ること／kenang-kenangan, peringatan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"汗",ch:["かん","あせ","すあせ","みず"],ans:1,mean:"運動や暑いときに出る水／keringat"}
+]},
+"w5d2":{title:"2日目",titleId:"Hari 2",topic:"アンケート",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"調子：（a. ようす　b. ぐあい）",sub:null,ch:["a. ようす（keadaan, kondisi）","b. ぐあい（kondisi fisik）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"移動：（a. よく動く　b. 位置をかえる）こと",sub:null,ch:["a. よく動く（sering bergerak）","b. 位置をかえる（berpindah tempat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"感動：（a. 心が動く　b. 体を動かす）こと",sub:null,ch:["a. 心が動く（hati tergerak）","b. 体を動かす（menggerakkan badan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"予想が（a. 困難　b. 残念）だ。",sub:null,ch:["a. 困難（sulit, susah）","b. 残念（sayang sekali）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"読んだ本の（a. 感想　b. 予想）文を書く。",sub:null,ch:["a. 感想（kesan, pendapat）","b. 予想（perkiraan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 難問　b. 正門）にチャレンジする。",sub:null,ch:["a. 難問（soal sulit）","b. 正門（pintu utama）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"重要なところを（a. 強調　b. 強力）する。",sub:null,ch:["a. 強調（menekankan）","b. 強力（kuat, bertenaga）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"卒業に必要な（a. 単語　b. 単位）を取る。",sub:null,ch:["a. 単語（kosakata）","b. 単位（kredit, satuan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"調べる",sub:null,ch:["くらべる","しらべる","えらべる","ちらべる"],ans:1,mean:"menyelidiki, mencari tahu"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"調査",sub:null,ch:["しんさ","ちゅうさ","けんさ","ちょうさ"],ans:3,mean:"penyelidikan, survei"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"困難",sub:null,ch:["かんなん","くんなん","こんなん","くなん"],ans:2,mean:"kesulitan, sulit"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"予想",sub:null,ch:["よこく","よしょう","よしん","よそう"],ans:3,mean:"perkiraan, prediksi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かんたん の正しい漢字は？",sub:null,ch:["問単","簡単","聞単","開単"],ans:1,mean:"簡単＝やさしい・むずかしくない／mudah, simpel"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"むずかしい の正しい漢字は？",sub:null,ch:["離しい","勤しい","雑しい","難しい"],ans:3,mean:"難しい＝簡単ではない／sulit, susah"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"うつす の正しい漢字は？",sub:null,ch:["移す","差す","消す","渡す"],ans:0,mean:"移す＝場所を変える／memindahkan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かんじる の正しい漢字は？",sub:null,ch:["演じる","感じる","混じる","動じる"],ans:1,mean:"感じる＝心で受け取る／merasakan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"調査",ch:["けんさ","しんさ","ちょうさ","ちゅうさ"],ans:2,mean:"調べること／penyelidikan, survei"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"感想",ch:["かんそ","がんそう","かんそう","かんすう"],ans:2,mean:"感じたこと・思ったこと／kesan, pendapat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"困難",ch:["かんなん","こんにん","こんなん","くんなん"],ans:2,mean:"難しいこと／kesulitan, sulit"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"予想",ch:["よしょう","よこく","よそう","よしん"],ans:2,mean:"前もって考えること／perkiraan, prediksi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"単語",ch:["たんご","たんぐ","たんこ","だんご"],ans:0,mean:"一つの言葉／kosakata, kata"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"移動",ch:["うごき","いとう","いどく","いどう"],ans:3,mean:"場所を変えること／perpindahan, berpindah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"感動",ch:["かんどう","かんとう","かんどく","がんどう"],ans:0,mean:"心が強く動くこと／terharu, terkesan"}
+]},
+"w5d3":{title:"3日目",titleId:"Hari 3",topic:"日本語クラス",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"直線：（a. まっすぐな　b. まがった）線",sub:null,ch:["a. まっすぐな（lurus）","b. まがった（bengkok）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"復習：（a. 習っていないこと　b. 習ったこと）を勉強すること",sub:null,ch:["a. 習っていないこと（belum dipelajari）","b. 習ったこと（sudah dipelajari）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"快適：とても（a. 気分がいい　b. 速い）こと",sub:null,ch:["a. 気分がいい（nyaman, menyenangkan）","b. 速い（cepat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"最近：（a. このごろ　b. 近い場所）",sub:null,ch:["a. このごろ（belakangan ini）","b. 近い場所（tempat dekat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"回復：天気や病気などが（a. よくなる　b. また悪くなる）こと",sub:null,ch:["a. よくなる（membaik）","b. また悪くなる（memburuk lagi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"往復：（a. 上りと下り　b. 行きと帰り）",sub:null,ch:["a. 上りと下り（naik dan turun）","b. 行きと帰り（pergi dan pulang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 選手　b. 選挙）で新しい市長を選ぶ。",sub:null,ch:["a. 選手（atlet, pemain）","b. 選挙（pemilihan umum）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"知り合いの家に（a. 下宿　b. 宿題）する。",sub:null,ch:["a. 下宿（kos, indekos）","b. 宿題（pekerjaan rumah）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昨夜",sub:null,ch:["さくばん","さくよ","さくじつ","さくや"],ans:3,mean:"tadi malam, semalam"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昼寝",sub:null,ch:["うたたね","あさね","ひるね","よるね"],ans:0,mean:"tidur siang"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"結婚",sub:null,ch:["けっこん","けこん","けっかん","けんこん"],ans:0,mean:"pernikahan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昨日",sub:null,ch:["きょう","きのう","きょねん","おととい"],ans:1,mean:"kemarin"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きみ の正しい漢字は？",sub:null,ch:["君","式","友","婦"],ans:0,mean:"君＝あなた（親しい相手）／kamu (tidak formal)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おくさん の正しい漢字は？",sub:null,ch:["姉さん","妻さん","夫さん","奥さん"],ans:3,mean:"奥さん＝他人の妻／istri (orang lain)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"むすぶ の正しい漢字は？",sub:null,ch:["練ぶ","婚ぶ","結ぶ","笑ぶ"],ans:2,mean:"結ぶ＝つなげる・まとめる／mengikat, menghubungkan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おいわい の正しい漢字は？",sub:null,ch:["お使い","お見舞い","お祝い","お手洗い"],ans:2,mean:"お祝い＝めでたいことを喜ぶこと／ucapan selamat, perayaan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"復習",ch:["ほくしゅう","ふくしゅう","ふくしゅ","ふっしゅう"],ans:1,mean:"習ったことを勉強し直すこと／mengulang pelajaran"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"最近",ch:["さきん","さいきん","さいごん","さいこん"],ans:1,mean:"このごろ／belakangan ini, akhir-akhir ini"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"選挙",ch:["せんきょ","せんこ","せんきょう","えらびょ"],ans:0,mean:"投票で代表を選ぶこと／pemilihan umum"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"結婚",ch:["けっかん","けっこん","けいこん","けつこん"],ans:1,mean:"夫婦になること／pernikahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"往復",ch:["おうふく","おうふく","おうふっ","こうふく"],ans:0,mean:"行きと帰り／pergi-pulang"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"昨日",ch:["きょう","さくじつ","きのう","おととい"],ans:2,mean:"前の日／kemarin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"直線",ch:["ちょくせい","ちょくせん","なおせん","ちょくさ"],ans:1,mean:"まっすぐな線／garis lurus"}
+]},
+"w5d4":{title:"4日目",titleId:"Hari 4",topic:"作文",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"寝坊：（a. 寝ている赤ちゃん　b. 起きる時間に起きないこと）",sub:null,ch:["a. 寝ている赤ちゃん（bayi yang tidur）","b. 起きる時間に起きないこと（bangun kesiangan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"婚約：（a. 結婚の約束　b. 結婚式場の予約）",sub:null,ch:["a. 結婚の約束（janji menikah, tunangan）","b. 結婚式場の予約（reservasi gedung pernikahan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"この（a. 曲　b. 局）を聞くと国を思い出す。",sub:null,ch:["a. 曲（lagu, musik）","b. 局（kantor, stasiun）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（スーパーのレジで）「袋は（a. 無断　b. 結構）です。」",sub:null,ch:["a. 無断（tanpa izin）","b. 結構（tidak perlu, sudah cukup）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"使わないものを押し入れの（a. 込　b. 奥）にしまう。",sub:null,ch:["a. 込（penuh, masuk）","b. 奥（bagian dalam, pojok）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"つぎの信号を右に（a. 曲げて　b. 曲がって）ください。",sub:null,ch:["a. 曲げて（membengkokkan）","b. 曲がって（berbelok）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"行くかどうかまよったが、（a. 結局　b. 広告）行かなかった。",sub:null,ch:["a. 結局（akhirnya, pada akhirnya）","b. 広告（iklan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"明日は（a. 土日　b. 祝日）です。",sub:null,ch:["a. 土日（Sabtu-Minggu）","b. 祝日（hari libur nasional）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昨夜",sub:null,ch:["さくばん","さくよ","さくじつ","さくや"],ans:3,mean:"tadi malam, semalam"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昼寝",sub:null,ch:["うたたね","あさね","ひるね","よるね"],ans:2,mean:"tidur siang"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"結婚",sub:null,ch:["けっこん","けこん","けっかん","けんこん"],ans:0,mean:"pernikahan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"昨日",sub:null,ch:["きょう","きのう","きょねん","おととい"],ans:1,mean:"kemarin"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きみ の正しい漢字は？",sub:null,ch:["君","式","友","婦"],ans:0,mean:"君＝あなた（親しい相手）／kamu (tidak formal)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おくさん の正しい漢字は？",sub:null,ch:["姉さん","妻さん","夫さん","奥さん"],ans:3,mean:"奥さん＝他人の妻／istri (orang lain)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"むすぶ の正しい漢字は？",sub:null,ch:["練ぶ","婚ぶ","結ぶ","笑ぶ"],ans:2,mean:"結ぶ＝つなげる・まとめる／mengikat, menghubungkan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"おいわい の正しい漢字は？",sub:null,ch:["お使い","お見舞い","お祝い","お手洗い"],ans:2,mean:"お祝い＝めでたいことを喜ぶこと／ucapan selamat, perayaan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"結婚",ch:["けいこん","けっこん","けっかん","けつこん"],ans:1,mean:"夫婦になること／pernikahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"結局",ch:["けいきょく","けっきょく","けつきょく","けっきょ"],ans:1,mean:"最終的に／akhirnya, pada akhirnya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"祝日",ch:["いわいじつ","しゅくにち","しゅくじつ","しゅっじつ"],ans:2,mean:"国の休日／hari libur nasional"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"昨夜",ch:["きのうよる","さくばん","さくよ","さくや"],ans:3,mean:"昨日の夜／tadi malam"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"婚約",ch:["こんにゃく","けっこん","こんやっく","こんやく"],ans:3,mean:"結婚の約束／pertunangan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"曲がる",ch:["まがる","まげる","きょくがる","まわる"],ans:0,mean:"方向を変える／berbelok, bengkok"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"昼寝",ch:["よるね","ひるね","ちゅうすい","うたたね"],ans:1,mean:"昼間に眠ること／tidur siang"}
+]},
+"w5d5":{title:"5日目",titleId:"Hari 5",topic:"歯科医院",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"腹痛：（a. あたま　b. おなか）が痛いこと",sub:null,ch:["a. あたま（kepala）","b. おなか（perut）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"治療：病気やけがを（a. たすける　b. なおす）こと",sub:null,ch:["a. たすける（menolong）","b. なおす（menyembuhkan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"将来は（a. 歯科　b. 歯医者）になりたい。",sub:null,ch:["a. 歯科（klinik gigi）","b. 歯医者（dokter gigi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 汚れ　b. 汚い）をとる。",sub:null,ch:["a. 汚れ（kotoran, noda）","b. 汚い（kotor）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"店の前に品物を（a. 並ぶ　b. 並べる）。",sub:null,ch:["a. 並ぶ（berjejer）","b. 並べる（menyusun, menata）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 熱心　b. 関心）に勉強する。",sub:null,ch:["a. 熱心（dengan semangat, tekun）","b. 関心（ketertarikan, minat）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"間違えた字を（a. 直す　b. 治す）。",sub:null,ch:["a. 直す（membetulkan tulisan）","b. 治す（menyembuhkan penyakit）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 暑い　b. 熱い）お茶。",sub:null,ch:["a. 暑い（panas cuaca）","b. 熱い（panas suhu benda）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"熱",sub:null,ch:["れつ","ねつ","なつ","らつ"],ans:1,mean:"demam, panas"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"歯科",sub:null,ch:["はか","いか","しか","ちか"],ans:2,mean:"klinik gigi, kedokteran gigi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"汚れる",sub:null,ch:["おごれる","おれる","きたれる","よごれる"],ans:3,mean:"menjadi kotor"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"熱い",sub:null,ch:["ねつい","なつい","あつい","れつい"],ans:2,mean:"panas (suhu benda)"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"むし の正しい漢字は？",sub:null,ch:["史","虫","戸","申"],ans:1,mean:"虫＝昆虫など小さな生き物／serangga, cacing"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ならべる の正しい漢字は？",sub:null,ch:["並べる","調べる","飛べる","呼べる"],ans:0,mean:"並べる＝順番に置く／menyusun, menata"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"た（ほかの意味）の正しい漢字は？",sub:null,ch:["外","地","池","他"],ans:3,mean:"他＝ほかの・それ以外の／lain, yang lain"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きたない の正しい漢字は？",sub:null,ch:["汚い","痛い","清い","厚い"],ans:0,mean:"汚い＝きれいでない／kotor"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"腹痛",ch:["はらいた","ふくうつ","ふくつ","ふくつう"],ans:3,mean:"おなかが痛いこと／sakit perut"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"治療",ch:["じりょう","ちりょく","ちりょう","ちりょ"],ans:2,mean:"病気を治すこと／pengobatan, perawatan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"歯科",ch:["ちか","はか","しか","いか"],ans:2,mean:"歯の医療／klinik gigi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"熱心",ch:["ねっしん","ねつしん","ねっこ","ねつごろ"],ans:0,mean:"一生懸命なこと／tekun, bersemangat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"汚れる",ch:["よごれる","きたれる","おごれる","けがれる"],ans:0,mean:"きれいでなくなること／menjadi kotor"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"並べる",ch:["ならべる","くらべる","なべる","えらべる"],ans:0,mean:"順番に置くこと／menyusun, menata"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"虫歯",ch:["むちば","むしは","ちゅうし","むしば"],ans:3,mean:"虫に食われた歯／gigi berlubang"}
+]},
+"w5d6":{title:"6日目",titleId:"Hari 6",topic:"問診票・健康診断",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"意欲：（a. 生意気　b. やる気）",sub:null,ch:["a. 生意気（sombong, lancang）","b. やる気（motivasi, semangat）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"呼吸：（a. 息をする　b. 息が切れる）こと",sub:null,ch:["a. 息をする（bernapas）","b. 息が切れる（kehabisan napas）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"息子：（a. 男　b. 女）の こども",sub:null,ch:["a. 男（laki-laki）","b. 女（perempuan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"独身：（a. 結婚している　b. 結婚していない）",sub:null,ch:["a. 結婚している（sudah menikah）","b. 結婚していない（belum menikah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"睡眠：（a. 寝る　b. 眠れない）こと",sub:null,ch:["a. 寝る（tidur）","b. 眠れない（tidak bisa tidur）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"身長：（a. 体の重さ　b. せの高さ）",sub:null,ch:["a. 体の重さ（berat badan）","b. せの高さ（tinggi badan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"たばこを（a. 払う　b. 吸う）。",sub:null,ch:["a. 払う（membayar）","b. 吸う（menghisap）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"救急車を（a. 呼ぶ　b. 飛ぶ）。",sub:null,ch:["a. 呼ぶ（memanggil）","b. 飛ぶ（terbang）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"息子",sub:null,ch:["むすこ","むすめ","おい","めい"],ans:0,mean:"anak laki-laki"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"酒屋",sub:null,ch:["さかば","さけや","さかや","さけてん"],ans:2,mean:"toko minuman beralkohol"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"身分",sub:null,ch:["みわけ","しんぶん","みぶん","しんわけ"],ans:2,mean:"status sosial, identitas"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"欲しい",sub:null,ch:["おしい","ほしい","はしい","よくしい"],ans:1,mean:"ingin memiliki, mau"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"さしみ の正しい漢字は？",sub:null,ch:["鮮魚","生魚","刺身","赤身"],ans:2,mean:"刺身＝生の魚を薄切りにした料理／sashimi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"つかれる の正しい漢字は？",sub:null,ch:["癒れる","病れる","痛れる","疲れる"],ans:3,mean:"疲れる＝元気がなくなる／kelelahan, capek"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ねむい の正しい漢字は？",sub:null,ch:["眠い","寝い","睡い","服い"],ans:0,mean:"眠い＝眠りたい気持ち／mengantuk"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"いき の正しい漢字は？",sub:null,ch:["呼","鼻","吸","息"],ans:3,mean:"息＝呼吸のこと／napas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"身長",ch:["みちょう","しんたけ","みたけ","しんちょう"],ans:3,mean:"身体の高さ／tinggi badan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"睡眠",ch:["すいみん","すいめん","すいみ","ねむり"],ans:0,mean:"寝ること／tidur"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"呼吸",ch:["こきゅ","こきゅう","こきょう","よきゅう"],ans:1,mean:"息をすること／pernapasan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"食欲",ch:["しょくほし","たべよく","しょくよく","しょくいよく"],ans:2,mean:"食べたい気持ち／nafsu makan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"独身",ch:["たんしん","どくしん","どくしん","ひとりみ"],ans:1,mean:"結婚していないこと／lajang, belum menikah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"疲れる",ch:["いたれる","つかれる","やすれる","たおれる"],ans:1,mean:"元気がなくなること／kelelahan, capek"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"息子",ch:["むすこ","こども","おとこ","むすめ"],ans:0,mean:"男のこども／anak laki-laki"}
+]},
+"w5d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"結婚式に出られなくて残念です。[残念]の読みは？",sub:null,ch:["だんねん","きねん","ざんねん","むねん"],ans:2,mean:"sayang sekali, menyesal"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"写真をとりますよ。笑って。[笑って]の読みは？",sub:null,ch:["あらって","いわって","はらって","わらって"],ans:3,mean:"tertawa, tersenyum"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"車をあちらに移動させてください。[移動]の読みは？",sub:null,ch:["じどう","ほどう","いどう","たどう"],ans:2,mean:"perpindahan, berpindah"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"お返事が遅れて、すみません。[遅れて]の読みは？",sub:null,ch:["おくれて","おそれて","あきれて","つかれて"],ans:0,mean:"terlambat"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"山田君は会社を辞めたそうです。[辞めた]の読みは？",sub:null,ch:["なめた","とめた","ほめた","やめた"],ans:3,mean:"berhenti kerja, mengundurkan diri"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"くつのひもを結ぶ。[結ぶ]の読みは？",sub:null,ch:["むすぶ","もすぶ","みすぶ","ゆすぶ"],ans:0,mean:"mengikat, menghubungkan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"おじいさんは山の奥に住んでいます。[奥]の読みは？",sub:null,ch:["そく","ろく","おく","まく"],ans:2,mean:"bagian dalam, pedalaman"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"政治の話は難しい。[政治]の読みは？",sub:null,ch:["せいじ","せいち","しょうち","しょうじ"],ans:0,mean:"politik"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"息子から手紙が来た。[息子]の読みは？",sub:null,ch:["むつこ","もすこ","むすこ","もつこ"],ans:2,mean:"anak laki-laki"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"日本酒は米からできています。[日本酒]の読みは？",sub:null,ch:["にほんちょ","にほんちゅ","にほんじゅ","にほんしゅ"],ans:3,mean:"sake, minuman beralkohol Jepang"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"おれいのはがきを書いた。[おれい]の正しい漢字は？",sub:null,ch:["お礼","お札","お机","お杯"],ans:0,mean:"お礼＝感謝の気持ち・贈り物／ucapan terima kasih"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"いつうかがえばよろしいでしょうか。[うかがえば]の正しい漢字は？",sub:null,ch:["司えば","伺えば","何えば","向えば"],ans:1,mean:"伺う＝訪問する・聞く（謙譲語）／bertanya/mengunjungi (sopan)"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"ことばの意味をしらべる。[しらべる]の正しい漢字は？",sub:null,ch:["呼べる","並べる","選べる","調べる"],ans:3,mean:"調べる＝詳しく見る・確かめる／menyelidiki, mencari tahu"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"タオルであせをふく。[あせ]の正しい漢字は？",sub:null,ch:["息","汗","涙","汁"],ans:1,mean:"汗＝運動や暑さで出る水分／keringat"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"まず（　）初に材料を細かく切ります。",sub:"いちばん最初を表す漢字は？/ Kanji yang berarti pertama kali?",ch:["再","先","際","最"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"天気は回（　）に向かっています。",sub:"回復を意味する漢字は？/ Kanji yang melengkapi kata 回復?",ch:["服","復","福","腹"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"（　）年はたいへんお世話になりました。",sub:"去年・昨年を表す漢字は？/ Kanji yang berarti tahun lalu?",ch:["次","毎","各","昨"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"会社へ戻らずに（　）接、帰宅します。",sub:"直接を意味する漢字は？/ Kanji yang melengkapi kata 直接?",ch:["直","間","真","正"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"頭（　）薬を買う。",sub:"頭痛を意味する漢字は？/ Kanji yang melengkapi kata 頭痛?",ch:["通","痛","病","療"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"食（　）がない。",sub:"食欲を意味する漢字は？/ Kanji yang melengkapi kata 食欲?",ch:["色","浴","気","欲"],ans:3}
+]}
+
+    }
+  },
+  "w6": {
+    label: "第6週",
+    topic: "よむ",
+    days: {
+"w6d1":{title:"1日目",titleId:"Hari 1",topic:"天気予報",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"暖房：（a. ヒーター　b. クーラー）",sub:null,ch:["a. ヒーター（pemanas）","b. クーラー（pendingin）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"震度：地震の（a. 深さ　b. 強さ）",sub:null,ch:["a. 深さ（kedalaman）","b. 強さ（kekuatan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"報告：（a. レポート　b. ポスター）",sub:null,ch:["a. レポート（laporan）","b. ポスター（poster）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"どちらが勝つか（a. 予報　b. 予想）する。",sub:null,ch:["a. 予報（prakiraan cuaca）","b. 予想（perkiraan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"風が（a. 付く　b. 吹く）。",sub:null,ch:["a. 付く（menempel）","b. 吹く（bertiup）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"地震による（a. 津波　b. 電波）の心配はありません。",sub:null,ch:["a. 津波（tsunami）","b. 電波（gelombang elektromagnetik）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"天気（a. 予報　b. 予定）",sub:null,ch:["a. 予報（prakiraan cuaca）","b. 予定（rencana）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 雲　b. 雪）が降る。",sub:null,ch:["a. 雲（awan）","b. 雪（salju）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"波",sub:null,ch:["あみ","なみ","まみ","のみ"],ans:1,mean:"gelombang, ombak"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"雲",sub:null,ch:["しも","ゆき","くも","ひょう"],ans:2,mean:"awan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"吹く",sub:null,ch:["つく","すく","ふく","ひく"],ans:2,mean:"bertiup (angin)"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"地震",sub:null,ch:["ちしん","じちん","しじん","じしん"],ans:3,mean:"gempa bumi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"でんぱ の正しい漢字は？",sub:null,ch:["電波","電飛","電報","電流"],ans:0,mean:"電波＝電磁波／gelombang elektromagnetik"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"はれる の正しい漢字は？",sub:null,ch:["情れる","清れる","晴れる","精れる"],ans:2,mean:"晴れる＝天気がよくなる／menjadi cerah"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あたたかい の正しい漢字は？",sub:null,ch:["緩かい","援かい","媛かい","暖かい"],ans:3,mean:"暖かい＝温度がちょうどよい／hangat"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ほうこく の正しい漢字は？",sub:null,ch:["報告","広告","申告","警告"],ans:0,mean:"報告＝情報を伝えること／laporan, melaporkan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"天気予報",ch:["てんきよほう","てんきよそう","てんきほう","てんきよほ"],ans:0,mean:"天気の見込みを伝えること／prakiraan cuaca"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"地震",ch:["ちしん","じしん","じじん","じしん"],ans:1,mean:"地面が揺れること／gempa bumi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"津波",ch:["つなみ","つなぱ","つはみ","じんぱ"],ans:0,mean:"地震で起きる大きな波／tsunami"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"暖房",ch:["だんほう","だんぼ","だんぼう","あたたかぼう"],ans:2,mean:"部屋を暖める装置／pemanas ruangan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"雲",ch:["しも","きり","くも","ゆき"],ans:2,mean:"空に浮かぶ白いもの／awan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"晴れ",ch:["てんき","せいてん","あおぞら","はれ"],ans:3,mean:"空が明るい天気／cuaca cerah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"報告",ch:["ほうこっ","ほうこく","もうこく","ほこく"],ans:1,mean:"情報を知らせること／laporan, melaporkan"}
+]},
+"w6d2":{title:"2日目",titleId:"Hari 2",topic:"求人広告",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"技術者：（a. アーティスト　b. エンジニア）",sub:null,ch:["a. アーティスト（seniman）","b. エンジニア（insinyur, teknisi）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"転職：（a. 仕事を変える　b. 会社をやめる）こと",sub:null,ch:["a. 仕事を変える（pindah kerja）","b. 会社をやめる（berhenti dari perusahaan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"請求書：代金を（a. 払う前　b. 払った後）にもらうもの",sub:null,ch:["a. 払う前（sebelum bayar）","b. 払った後（setelah bayar）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"事務所：（a. オフィス　b. インフォメーション）",sub:null,ch:["a. オフィス（kantor）","b. インフォメーション（informasi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"アルバイトを（a. 要求　b. 募集）する。",sub:null,ch:["a. 要求（menuntut, meminta）","b. 募集（merekrut, membuka lowongan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"父は（a. 求人　b. 公務員）です。",sub:null,ch:["a. 求人（lowongan kerja）","b. 公務員（pegawai negeri）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"やる気のある人を（a. 求めて　b. 願って）います。",sub:null,ch:["a. 求めて（mencari, menginginkan）","b. 願って（berharap, memohon）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"彼とは（a. 職業　b. 職場）で知り合いました。",sub:null,ch:["a. 職業（pekerjaan, profesi）","b. 職場（tempat kerja）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"要求",sub:null,ch:["そうきゅう","せいきゅう","しょうきゅう","ようきゅう"],ans:3,mean:"permintaan, tuntutan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"求める",sub:null,ch:["まとめる","もとめる","みとめる","むとめる"],ans:1,mean:"mencari, menginginkan, meminta"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"税務署",sub:null,ch:["ぜいむしょ","じょうむしょ","ぞうむしょ","ざいむしょ"],ans:0,mean:"kantor pajak"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"求人",sub:null,ch:["ゆうじん","きょうじん","ようじん","きゅうじん"],ans:3,mean:"lowongan kerja, mencari karyawan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"かちょう の正しい漢字は？",sub:null,ch:["社長","部長","課長","会長"],ans:2,mean:"課長＝課のリーダー／kepala seksi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"びよういん の正しい漢字は？",sub:null,ch:["理容院","病院","美容院","両院"],ans:2,mean:"美容院＝髪を切るところ／salon kecantikan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ないよう の正しい漢字は？",sub:null,ch:["代用","必要","無用","内容"],ans:3,mean:"内容＝中身・詳細／isi, konten"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"いっぱん の正しい漢字は？",sub:null,ch:["一船","一般","一投","一沿"],ans:1,mean:"一般＝普通・広く全体に／umum, pada umumnya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"求人",ch:["きゅうにん","もとめひと","きゅうじん","ようじん"],ans:2,mean:"働く人を探すこと／lowongan kerja"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"募集",ch:["もしゅう","ぼあつ","ぼしゅう","ぼしゅ"],ans:2,mean:"人や物を集めること／rekrutmen, penerimaan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"職業",ch:["しごと","しょくいん","しょくぎょう","しょくば"],ans:2,mean:"仕事・職種／pekerjaan, profesi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"技術",ch:["ぎじゅ","きじゅつ","ぎじゅつ","ぎじつ"],ans:2,mean:"専門的なスキル／teknik, teknologi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"内容",ch:["ないよう","なかみ","ないりょう","うちよう"],ans:0,mean:"中身・詳細／isi, konten"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"要求",ch:["ようこう","ようけい","ようきゅ","ようきゅう"],ans:3,mean:"必要として求めること／permintaan, tuntutan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"転職",ch:["てんしょく","でんしょく","かえしごと","てんしょっ"],ans:0,mean:"仕事を変えること／pindah kerja"}
+]},
+"w6d3":{title:"3日目",titleId:"Hari 3",topic:"スポーツ記事",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"投手：（a. ピッチャー　b. バッター）",sub:null,ch:["a. ピッチャー（pitcher）","b. バッター（batter）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"勝負：勝ち負けを（a. 決める　b. 決めない）こと",sub:null,ch:["a. 決める（menentukan）","b. 決めない（tidak menentukan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"家族は留学に（a. 反対　b. 禁止）した。",sub:null,ch:["a. 反対（menentang）","b. 禁止（melarang）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 野球　b. 電球）を新しいのと交換する。",sub:null,ch:["a. 野球（bisbol）","b. 電球（bola lampu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"涙を（a. 流す　b. 流れる）。",sub:null,ch:["a. 流す（mengalirkan）","b. 流れる（mengalir sendiri）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お世話になったことは（a. 決して　b. 失して）忘れません。",sub:null,ch:["a. 決して（sama sekali tidak）","b. 失して（salah）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"試合は（a. 3比3　b. 3対3）の同点だ。",sub:null,ch:["a. 3比3（3 banding 3）","b. 3対3（3 lawan 3）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"美人コンテストでミス日本が（a. 決勝　b. 決定）した。",sub:null,ch:["a. 決勝（babak final）","b. 決定（keputusan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"地球",sub:null,ch:["ちきょう","じきゅう","ちきゅう","ちっくう"],ans:2,mean:"bumi, planet Bumi"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"反対",sub:null,ch:["はんたい","はんだい","はんてい","はんでい"],ans:0,mean:"menentang, berlawanan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"投げる",sub:null,ch:["まげる","なげる","にげる","もげる"],ans:1,mean:"melempar"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"勝つ",sub:null,ch:["うつ","たつ","かつ","けつ"],ans:2,mean:"menang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"あいて の正しい漢字は？",sub:null,ch:["会手","空手","対手","相手"],ans:3,mean:"相手＝一緒に何かをする人／lawan, mitra"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"たたかう の正しい漢字は？",sub:null,ch:["浅う","戦う","残う","横う"],ans:1,mean:"戦う＝싸우다／bertarung, berjuang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"そうだん の正しい漢字は？",sub:null,ch:["値段","商談","相談","階段"],ans:2,mean:"相談＝話し合うこと／konsultasi, berunding"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ゆしゅつ の正しい漢字は？",sub:null,ch:["輸出","輪出","軽出","転出"],ans:0,mean:"輸出＝外国に売ること／ekspor"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"優勝",ch:["ゆうかち","ゆうしょう","ゆうしょ","ゆしょう"],ans:1,mean:"一番になること／juara, memenangkan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"決勝",ch:["けしょう","けっしょう","けつしょう","けっしょ"],ans:1,mean:"最後の試合／babak final"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"反対",ch:["はんたい","はんてい","はんだい","はんない"],ans:0,mean:"反すること・逆／menentang, berlawanan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"結果",ch:["けつか","けっか","けいか","けっこ"],ans:1,mean:"最終的な答え／hasil, akibat"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"果物",ch:["くだもの","かぶつ","はたもの","みのもの"],ans:0,mean:"食べられる実／buah-buahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"投手",ch:["とうじゅ","なげしゅ","とうしゅ","とうてい"],ans:2,mean:"ボールを投げる選手／pitcher"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"勝負",ch:["かちまち","しょうぶ","かちまけ","しょうふ"],ans:1,mean:"試合・勝ち負け／pertandingan"}
+]},
+"w6d4":{title:"4日目",titleId:"Hari 4",topic:"経済",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"サイエンス：（a. 科学　b. 化学）",sub:null,ch:["a. 科学（sains）","b. 化学（kimia）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"地球の温度は昔と（a. 過ぎて　b. 比べて）上がっている。",sub:null,ch:["a. 過ぎて（sudah melampaui）","b. 比べて（dibandingkan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お酒の（a. 材料　b. 原料）は米です。",sub:null,ch:["a. 材料（bahan）","b. 原料（bahan baku）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ボランティアを（a. 行動　b. 活動）をする。",sub:null,ch:["a. 行動（tindakan）","b. 活動（kegiatan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"口紅は（a. 化粧品　b. 化粧室）です。",sub:null,ch:["a. 化粧品（produk kosmetik）","b. 化粧室（ruang rias）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"気温の（a. 変化　b. 文化）",sub:null,ch:["a. 変化（perubahan）","b. 文化（budaya）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"住所が（a. 変える　b. 変わる）。",sub:null,ch:["a. 変える（mengubah）","b. 変わる（berubah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"貿易の自由（a. 課　b. 化）",sub:null,ch:["a. 課（seksi, bagian）","b. 化（menjadi）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"化粧",sub:null,ch:["かしょう","けしょう","きしょう","けちょう"],ans:1,mean:"make-up, berdandan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"文化",sub:null,ch:["ぶんか","もんか","ぶんけ","もんけ"],ans:0,mean:"budaya, kebudayaan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"比べる",sub:null,ch:["こらべる","くらべる","ならべる","しらべる"],ans:1,mean:"membandingkan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"大変",sub:null,ch:["おおへん","だいへん","たいぺん","たいへん"],ans:3,mean:"sangat; sulit, repot"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぎいん の正しい漢字は？",sub:null,ch:["議員","議人","議民","議因"],ans:0,mean:"議員＝国会の代表者／anggota parlemen"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こくさい の正しい漢字は？",sub:null,ch:["交察","交際","国察","国際"],ans:3,mean:"国際＝国と国の間／internasional"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"げんいん の正しい漢字は？",sub:null,ch:["原因","原囚","原囚","原回"],ans:0,mean:"原因＝何かが起きた理由／penyebab"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"せいかつ の正しい漢字は？",sub:null,ch:["政治","正確","生活","性格"],ans:2,mean:"生活＝日々の暮らし／kehidupan sehari-hari"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"経済",ch:["けいさい","けいざい","きょうざい","けいじゃい"],ans:1,mean:"お金やものの流れ／ekonomi"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"貿易",ch:["ぼえき","ぼうえき","ぼうえっき","もうえき"],ans:1,mean:"外国との売り買い／perdagangan internasional"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"成長",ch:["なりちょう","せちょう","せいちょう","せいちょ"],ans:2,mean:"大きくなること／pertumbuhan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"国際",ch:["こくせい","こくしゃい","くにさい","こくさい"],ans:3,mean:"国と国の間の／internasional"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"原料",ch:["げんりょ","もとりょう","はらりょう","げんりょう"],ans:3,mean:"製品の元になるもの／bahan baku"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"文化",ch:["ぶんか","もんか","ぶんけ","ふんか"],ans:0,mean:"人々の生活様式／budaya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"変化",ch:["へんこ","へんか","へんが","かわり"],ans:1,mean:"変わること／perubahan"}
+]},
+"w6d5":{title:"5日目",titleId:"Hari 5",topic:"地球温暖化",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"サイエンス：（a. 科学　b. 化学）",sub:null,ch:["a. 科学（sains）","b. 化学（kimia）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"地球の温度は昔と（a. 過ぎて　b. 比べて）上がっている。",sub:null,ch:["a. 過ぎて（sudah melampaui）","b. 比べて（dibandingkan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"お酒の（a. 材料　b. 原料）は米です。",sub:null,ch:["a. 材料（bahan）","b. 原料（bahan baku）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"ボランティアを（a. 行動　b. 活動）をする。",sub:null,ch:["a. 行動（tindakan）","b. 活動（kegiatan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"口紅は（a. 化粧品　b. 化粧室）です。",sub:null,ch:["a. 化粧品（produk kosmetik）","b. 化粧室（ruang rias）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"気温の（a. 変化　b. 文化）",sub:null,ch:["a. 変化（perubahan）","b. 文化（budaya）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"住所が（a. 変える　b. 変わる）。",sub:null,ch:["a. 変える（mengubah）","b. 変わる（berubah）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"貿易の自由（a. 課　b. 化）",sub:null,ch:["a. 課（seksi）","b. 化（menjadi, perubahan）"],ans:1},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"化粧",sub:null,ch:["かしょう","けしょう","きしょう","けちょう"],ans:1,mean:"make-up, berdandan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"文化",sub:null,ch:["ぶんか","もんか","ぶんけ","もんけ"],ans:0,mean:"budaya, kebudayaan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"比べる",sub:null,ch:["こらべる","くらべる","ならべる","しらべる"],ans:1,mean:"membandingkan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"大変",sub:null,ch:["おおへん","だいへん","たいぺん","たいへん"],ans:3,mean:"sangat; sulit, repot"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ぎいん の正しい漢字は？",sub:null,ch:["議員","議人","議民","議因"],ans:0,mean:"議員＝国会の代表者／anggota parlemen"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こくさい の正しい漢字は？",sub:null,ch:["交察","交際","国察","国際"],ans:3,mean:"国際＝国と国の間／internasional"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"げんいん の正しい漢字は？",sub:null,ch:["原因","原囚","原固","原回"],ans:0,mean:"原因＝何かが起きた理由／penyebab"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"せいかつ の正しい漢字は？",sub:null,ch:["政治","正確","生活","性格"],ans:2,mean:"生活＝日々の暮らし／kehidupan sehari-hari"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"地球温暖化",ch:["ちきゅうあたたか","ちきゅうだんか","ちきゅうおんか","ちきゅうおんだんか"],ans:3,mean:"地球が温かくなること／pemanasan global"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"原料",ch:["もとりょう","はらりょう","げんりょう","げんりょ"],ans:2,mean:"製品の元になるもの／bahan baku"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"変化",ch:["へんこ","へんが","へんか","かわり"],ans:2,mean:"変わること／perubahan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"活動",ch:["かつどう","かつど","かどう","こうどう"],ans:0,mean:"行動すること／kegiatan, aktivitas"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"化粧品",ch:["けしょうひん","けしょうびん","かしょうひん","けしょうぴん"],ans:0,mean:"肌に使う美容製品／produk kosmetik"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"文化",ch:["ぶんか","もんか","ふんか","ぶんけ"],ans:0,mean:"人々の生活様式／budaya"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"国際",ch:["こくしゃい","こくせい","くにさい","こくさい"],ans:3,mean:"国と国の間の／internasional"}
+]},
+"w6d6":{title:"6日目",titleId:"Hari 6",topic:"政治",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"欠点：（a. いい　b. 悪い）ところ",sub:null,ch:["a. いい（hal yang baik）","b. 悪い（kekurangan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"欠席：参加（a. する　b. しない）こと",sub:null,ch:["a. する（hadir）","b. しない（tidak hadir）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"専門家：（a. プロ　b. アマチュア）",sub:null,ch:["a. プロ（profesional）","b. アマチュア（amatir）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"国際的：（a. パーソナル　b. インターナショナル）",sub:null,ch:["a. パーソナル（personal）","b. インターナショナル（internasional）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"日本へ来た（a. 目的　b. 原因）は研究です。",sub:null,ch:["a. 目的（tujuan）","b. 原因（penyebab）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 窓口　b. 改札口）を出た所で待っています。",sub:null,ch:["a. 窓口（loket）","b. 改札口（pintu peron）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"（a. 真　b. 実）は会社を辞めたいんです。",sub:null,ch:["a. 真（benar-benar）","b. 実（sesungguhnya）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"電車の時刻が（a. 改正　b. 変化）された。",sub:null,ch:["a. 改正（direvisi）","b. 変化（perubahan）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"欠ける",sub:null,ch:["うける","たける","かける","すける"],ans:2,mean:"kurang, hilang sebagian"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"専門",sub:null,ch:["せんもん","てんもん","でんもん","ぜんもん"],ans:0,mean:"spesialisasi, keahlian khusus"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"実験",sub:null,ch:["しけん","しっけん","じけん","じっけん"],ans:3,mean:"eksperimen, percobaan"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"改める",sub:null,ch:["たかしめる","あらためる","たしかめる","あたらめる"],ans:1,mean:"memperbaiki, merevisi"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"せいふ の正しい漢字は？",sub:null,ch:["政府","勝負","正付","西部"],ans:0,mean:"政府＝国を治める組織／pemerintah"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ひてい の正しい漢字は？",sub:null,ch:["日程","不定","非常","否定"],ans:3,mean:"否定＝違うと言うこと／negasi, menyangkal"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"とどうふけん の正しい漢字は？",sub:null,ch:["県都道府","道都府県","都県道府","都道府県"],ans:3,mean:"都道府県＝日本の地方行政区分／prefektur Jepang"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"せいじ の正しい漢字は？",sub:null,ch:["戦時","政治","静止","少子"],ans:1,mean:"政治＝国を治めること／politik"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"専門家",ch:["せんもんが","ぜんもんか","せんもんけ","せんもんか"],ans:3,mean:"その分野の知識が深い人／ahli, pakar"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"改正",ch:["かいせい","あらためる","かいせ","かいしょう"],ans:0,mean:"法律などを直すこと／revisi, amandemen"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"実験",ch:["しけん","じっけん","じっけい","じけん"],ans:1,mean:"試してみること／eksperimen"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"否定",ch:["ふてい","ひじょう","ひてい","ひてつ"],ans:2,mean:"違うと言うこと／negasi, menyangkal"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"欠席",ch:["けせき","けっせき","かっせき","けつせき"],ans:1,mean:"出席しないこと／tidak hadir, absen"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"政府",ch:["せいふう","せいふ","せふ","まつりごと"],ans:1,mean:"国を治める組織／pemerintah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"目的",ch:["もくてき","めてき","もくてっき","もくてき"],ans:0,mean:"めざすもの・ねらい／tujuan"}
+]},
+"w6d7":{title:"7日目",titleId:"Hari 7",topic:"実戦問題",questions:[
+{sec:"問題1",lbl:"読み",type:"reading",q:"週末は全国的に晴れるでしょう。[晴れる]の読みは？",sub:null,ch:["ばれる","てれる","はれる","なれる"],ans:2,mean:"menjadi cerah"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"これは日本で一般に売られている食品です。[一般]の読みは？",sub:null,ch:["いっせん","いっそう","いっせい","いっぱん"],ans:3,mean:"umumnya, pada umumnya"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"これはなんという果物ですか。[果物]の読みは？",sub:null,ch:["けだもの","くだもの","こだもの","こなもの"],ans:1,mean:"buah-buahan"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"私たちのチームは強いチームと戦って勝ちました。[戦って]の読みは？",sub:null,ch:["かたかって","たかたって","かかたって","たたかって"],ans:3,mean:"bertarung, berjuang"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"国際会議に出席する。[国際会議]の読みは？",sub:null,ch:["こくせいかいに","こくさいかいぎ","こくさいかいに","こくせいかいぎ"],ans:1,mean:"konferensi internasional"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"大学で政治経済を学ぶ。[政治経済]の読みは？",sub:null,ch:["せいちけいざい","せいじけいざい","せいちけいさい","せいじけいさい"],ans:1,mean:"ilmu politik dan ekonomi"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"寒さに負けないでがんばろう。[負けないで]の読みは？",sub:null,ch:["なさけないで","もけないで","なまけないで","まけないで"],ans:3,mean:"tanpa kalah, jangan menyerah"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"原料を輸入する。[原料]の読みは？",sub:null,ch:["ひりょう","ねんりょう","げんりょう","こうりょう"],ans:2,mean:"bahan baku"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"車の窓からごみを投げ捨てないでください。[投げ捨て]の読みは？",sub:null,ch:["なげすて","まげすて","なげつて","まげつて"],ans:0,mean:"membuang (sampah)"},
+{sec:"問題1",lbl:"読み",type:"reading",q:"宿題を済ませてから、テレビを見ます。[済ませて]の読みは？",sub:null,ch:["からませて","さませて","おわませて","すませて"],ans:3,mean:"menyelesaikan, membereskan"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"じっけん結果を報告する。[じっけん]の正しい漢字は？",sub:null,ch:["事件","実験","試験","条件"],ans:1,mean:"実験＝試してみること／eksperimen"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"せんもんかに意見を聞く。[せんもんか]の正しい漢字は？",sub:null,ch:["専門家","専問家","千聞家","千文家"],ans:0,mean:"専門家＝その分野の知識が深い人／ahli, pakar"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"地球おんだんかについて話し合う。[おんだんか]の正しい漢字は？",sub:null,ch:["温段化","音暖化","温暖化","音断化"],ans:2,mean:"温暖化＝地球が温かくなること／pemanasan global"},
+{sec:"問題2",lbl:"漢字",type:"kanji",q:"明日は北風がふいて寒くなるでしょう。[ふいて]の正しい漢字は？",sub:null,ch:["吸いて","吹いて","欠いて","比いて"],ans:1,mean:"吹く＝風が流れる／bertiup"},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"次の試験は第10（　）までです。",sub:"テキストの区切りを表す言葉は？/ Kata untuk satuan pelajaran?",ch:["部","課","問","科"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"工場は機械（　）された。",sub:"機械を使うようになることを表す漢字は？/ Kanji yang berarti mekanisasi?",ch:["比","的","性","化"],ans:3},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"個人（　）な理由で、会社を辞めました。",sub:"個人的を表す漢字は？/ Kanji yang melengkapi 個人的?",ch:["上","因","的","内"],ans:2},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"ラジオで天気予（　）を聞く。",sub:"天気予報を表す漢字は？/ Kanji yang melengkapi 天気予報?",ch:["想","報","定","防"],ans:1},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"首相はニュースの内容を（　）定した。",sub:"否定を表す漢字は？/ Kanji yang melengkapi 否定?",ch:["否","内","無","正"],ans:0},
+{sec:"問題3",lbl:"穴埋め",type:"meaning",q:"電話の相手は電（　）の届かない所にいるようだ。",sub:"電波を表す漢字は？/ Kanji yang melengkapi 電波?",ch:["池","車","信","波"],ans:3}
+]}
+
+    }
+  }
+};
+
+var WEEK_ORDER = ["w1","w2","w3","w4","w5","w6"];
+var WEEK_DAY_ORDER = {
+  "w1": ["w1d1","w1d2","w1d3","w1d4","w1d5","w1d6","w1d7"],
+  "w2": ["w2d1","w2d2","w2d3","w2d4","w2d5","w2d6","w2d7"],
+  "w3": ["w3d1","w3d2","w3d3","w3d4","w3d5","w3d6","w3d7"],
+  "w4": ["w4d1","w4d2","w4d3","w4d4","w4d5","w4d6","w4d7"],
+  "w5": ["w5d1","w5d2","w5d3","w5d4","w5d5","w5d6","w5d7"],
+  "w6": ["w6d1","w6d2","w6d3","w6d4","w6d5","w6d6","w6d7"]
+};
+
+var TABS=[{k:"all",l:"すべて"},{k:"meaning",l:"意味"},{k:"reading",l:"読み"},{k:"kanji",l:"漢字"},{k:"vocab",l:"問題文の漢字"}];
+var FOK=["正解！Benar!","素晴らしい！Bagus sekali!","その通り！Tepat sekali!"];
+var FNG=["不正解。Salah.","残念！Sayang sekali.","もう一度。Coba lagi."];
+
+var currentWeek=null, currentDay=null, mode="all", ql=[], cur=0, sc=0, hist=[];
+
+function shu(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function getQuestions(){
+  var src=WEEKS[currentWeek].days[currentDay].questions;
+  return shu(mode==="all"?src:src.filter(function(q){return q.type===mode;}));
+}
+function setMode(m){mode=m;cur=0;sc=0;hist=[];ql=getQuestions();renderQuiz();}
+function next(){cur++;renderQuiz();}
+function back(){if(cur>0){cur--;renderQuiz();}}
+function restart(){cur=0;sc=0;hist=[];ql=getQuestions();renderQuiz();}
+function goHome(){currentWeek=null;currentDay=null;mode="all";renderWeekMenu();}
+function goDayMenu(){currentDay=null;mode="all";renderDayMenu();}
+
+function selectWeek(w){
+  if(!WEEKS[w])return;
+  currentWeek=w;currentDay=null;mode="all";
+  renderDayMenu();
+}
+function selectDay(d){
+  currentDay=d;mode="all";cur=0;sc=0;hist=[];
+  ql=getQuestions();renderQuiz();
+}
+
+function answer(i){
+  if(hist[cur]&&hist[cur].chosen!==null)return;
+  var q=ql[cur];var ok=i===q.ans;
+  if(ok)sc++;
+  hist[cur]={chosen:i,correct:ok};
+  renderAnswered(q,i,ok);
+}
+function renderAnswered(q,chosen,ok){
+  document.querySelectorAll(".cb").forEach(function(b){b.disabled=true;});
+  document.getElementById("b"+chosen).classList.add(ok?"ok":"ng");
+  if(!ok)document.getElementById("b"+q.ans).classList.add("rv");
+  var fb=document.getElementById("fb");
+  fb.className="fb "+(ok?"ok":"ng");
+  var msg=(ok?"⭕ ":"❌ ")+rnd(ok?FOK:FNG)+(ok?"":"<br>正解："+q.ch[q.ans]);
+  if(q.mean&&(q.type==="vocab"||q.type==="reading"||q.type==="kanji"))msg+="<br><span style='font-size:13px;opacity:.85'>意味 / Arti: "+q.mean+"</span>";
+  fb.innerHTML=msg;fb.style.display="block";
+}
+
+function renderWeekMenu(){
+  var html="<div class='menu-screen'>";
+  html+="<h1>日本語総まとめ N3 漢字</h1>";
+  html+="<p>週を選んでください / Pilih minggu</p>";
+  html+="<div class='week-cards'>";
+  WEEK_ORDER.forEach(function(w){
+    var wdata=WEEKS[w];
+    if(wdata){
+      var cnt=WEEK_DAY_ORDER[w]?WEEK_DAY_ORDER[w].length:0;
+      html+="<div class='week-card' data-w='"+w+"' onclick='selectWeek(this.dataset.w)'>";
+      html+="<div class='wc-num'>"+wdata.label.replace("第","").replace("週","")+"</div>";
+      html+="<div class='wc-title'>"+wdata.label+"</div>";
+      html+="<div style='font-size:11px;color:#888'>"+wdata.topic+"</div>";
+      html+="<div class='wc-count'>"+cnt+"日分</div></div>";
+    } else {
+      html+="<div class='week-card empty'>";
+      html+="<div class='wc-num' style='color:#ccc'>"+(WEEK_ORDER.indexOf(w)+1)+"</div>";
+      html+="<div class='wc-title' style='color:#ccc'>第"+(WEEK_ORDER.indexOf(w)+1)+"週</div>";
+      html+="<div class='wc-count' style='background:#eee;color:#ccc'>準備中</div></div>";
+    }
+  });
+  html+="</div></div>";
+  document.getElementById("app").innerHTML=html;
+}
+
+function renderDayMenu(){
+  var wdata=WEEKS[currentWeek];
+  var dayKeys=WEEK_DAY_ORDER[currentWeek];
+  var html="<div class='menu-screen'>";
+  html+="<div class='breadcrumb'><span onclick='goHome()'>🏠 ホーム</span> › "+wdata.label+"</div>";
+  html+="<h1>"+wdata.label+" れんしゅう</h1>";
+  html+="<p>日を選んでください / Pilih hari</p>";
+  html+="<div class='day-cards'>";
+  dayKeys.forEach(function(d){
+    var day=wdata.days[d];
+    var num=d.replace(/w\dd/,"").replace(/\D/g,"");
+    num=d.match(/\d+$/)[0];
+    html+="<div class='day-card' data-d='"+d+"' onclick='selectDay(this.dataset.d)'>";
+    html+="<div class='dc-num'>"+num+"</div>";
+    html+="<div class='dc-title'>"+num+"日目</div>";
+    html+="<div class='dc-sub'>"+day.topic+"</div>";
+    html+="<div class='dc-count'>"+day.questions.length+"問</div></div>";
+  });
+  html+="</div></div>";
+  document.getElementById("app").innerHTML=html;
+}
+
+function renderQuiz(){
+  var app=document.getElementById("app");
+  if(cur>=ql.length){renderScore(app);return;}
+  var q=ql[cur];
+  var wdata=WEEKS[currentWeek];
+  var daydata=wdata.days[currentDay];
+  var dayNum=currentDay.match(/\d+$/)[0];
+  var pct=(cur/ql.length*100).toFixed(0);
+  var LT=["a","b","c","d"];
+  var visibleTabs=dayNum==="7"?TABS.filter(function(t){return t.k!=="vocab";}):TABS;
+  var tabsH=visibleTabs.map(function(t){var on=mode===t.k?" on":"";return "<button class=\'tab"+on+"\' data-k=\'"+t.k+"\' onclick=\'setMode(this.dataset.k)\'>"+t.l+"</button>";}).join("");
+  var isV=q.type==="vocab";
+  var qH=isV
+    ?"<span class='kbig'>"+q.q+"</span><span style='font-size:14px;color:#666;display:inline-block'>読み方は？/ Bagaimana cara bacanya?</span>"
+    :q.q.replace(/\n/g,"<br>")+(q.sub?"<div class='sub-hint'>"+q.sub+"</div>":"");
+  var backBtn=cur>0?"<button class='bck' onclick='back()'>← 前の問題</button>":"<span></span>";
+  var nxtLbl=cur+1<ql.length?"次の問題へ →":"結果を見る →";
+  var choicesH=q.ch.map(function(c,i){return "<button class='cb' id='b"+i+"' onclick='answer("+i+")'><span class='cl'>"+LT[i]+".</span><span>"+c+"</span></button>";}).join("");
+  app.innerHTML=
+    "<div class='hdr'>"+
+      "<div>"+
+        "<div class='ttl'>"+wdata.label+" "+dayNum+"日目 れんしゅう</div>"+
+        "<div class='ttl-sub'>Soal "+(cur+1)+" / "+ql.length+" &nbsp;·&nbsp; "+
+          "<span class='home-link' onclick='goHome()'>🏠 ホーム</span> / "+
+          "<span class='home-link' onclick='goDayMenu()'>← 日選択</span>"+
+        "</div>"+
+      "</div>"+
+      "<div class='tabs'>"+tabsH+"</div>"+
+    "</div>"+
+    "<div class='pbw'><div class='pbf' style='width:"+pct+"%'></div></div>"+
+    "<div class='badge'>"+q.lbl+"</div>"+
+    "<div class='qn'>問 "+(cur+1)+"</div>"+
+    "<div class='q'>"+qH+"</div>"+
+    "<div class='choices'>"+choicesH+"</div>"+
+    "<div class='fb' id='fb'></div>"+
+    "<div style='display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px'>"+
+      backBtn+
+      "<button class='nxt' onclick='next()'>"+nxtLbl+"</button>"+
+    "</div>";
+  var h=hist[cur];
+  if(h&&h.chosen!==null)renderAnswered(q,h.chosen,h.correct);
+}
+
+function renderScore(app){
+  var pct=Math.round(sc/ql.length*100);
+  var msg=pct>=80?"素晴らしい！Luar biasa! 🎉":pct>=60?"よくできました。Cukup bagus!":"もっと練習しましょう。Perlu latihan lagi.";
+  var wdata=WEEKS[currentWeek];
+  var dayNum=currentDay.match(/\d+$/)[0];
+  app.innerHTML=
+    "<div class='sc'>"+
+    "<div class='snum'>"+sc+"/"+ql.length+"</div>"+
+    "<div class='slbl'>"+msg+"</div>"+
+    "<div class='srow'>"+
+      "<div class='scard'><div class='sn' style='color:#1D9E75'>"+sc+"</div><div class='sl'>正解 / Benar</div></div>"+
+      "<div class='scard'><div class='sn' style='color:#E24B4A'>"+(ql.length-sc)+"</div><div class='sl'>不正解 / Salah</div></div>"+
+      "<div class='scard'><div class='sn' style='color:#185FA5'>"+pct+"%</div><div class='sl'>正答率 / Skor</div></div>"+
+    "</div>"+
+    "<div class='btn-row'>"+
+      "<button class='rbtn' onclick='restart()'>もう一度 / Ulangi</button>"+
+      "<button class='mbtn' onclick='goDayMenu()'>← "+wdata.label+"の日選択</button>"+
+      "<button class='mbtn' onclick='goHome()'>🏠 ホーム</button>"+
+    "</div></div>";
+}
+
+// パスワード機能
+var PW = "iinekanji";
+var PW_KEY = "kanji_n3_auth";
+
+function pwKeyHandler(e){if(e.key==="Enter")checkPassword();}
+
+function renderPasswordScreen() {
+  document.getElementById("app").innerHTML =
+    "<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;'>" +
+    "<div style='font-size:2.5rem;'>🔒</div>" +
+    "<div style='font-size:1.2rem;font-weight:bold;color:#1a3a5c;'>パスワードを入力してください</div>" +
+    "<div style='font-size:0.9rem;color:#666;'>Masukkan password</div>" +
+    "<input id='pw-input' type='password' placeholder='パスワード' style='padding:12px 20px;font-size:1rem;border:2px solid #ccc;border-radius:12px;outline:none;text-align:center;width:220px;' onkeydown='pwKeyHandler(event)' />" +
+    "<button onclick='checkPassword()' style='padding:12px 40px;background:#1a3a5c;color:#fff;border:none;border-radius:12px;font-size:1rem;cursor:pointer;'>入る</button>" +
+    "<div id='pw-error' style='color:#c0392b;font-size:0.9rem;min-height:1.2em;'></div>" +
+    "</div>";
+  setTimeout(function(){ var el=document.getElementById("pw-input"); if(el) el.focus(); }, 100);
+}
+
+function checkPassword() {
+  var input = document.getElementById("pw-input").value;
+  if (input === PW) {
+    localStorage.setItem(PW_KEY, "1");
+    renderWeekMenu();
+  } else {
+    document.getElementById("pw-error").textContent = "パスワードが違います。Kata sandi salah.";
+    document.getElementById("pw-input").value = "";
+    document.getElementById("pw-input").focus();
+  }
+}
+
+// 初回のみパスワード確認
+if (localStorage.getItem(PW_KEY) === "1") {
+  renderWeekMenu();
+} else {
+  renderPasswordScreen();
+}
+
+</script>
+</body>
+</html>
