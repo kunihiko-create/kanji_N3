@@ -75,13 +75,89 @@ body{font-family:'Hiragino Kaku Gothic Pro','Meiryo',sans-serif;background:#f4f6
 .rbtn.rev:hover{background:#b03030}
 .day-card.has-wrong{border-color:#E24B4A}
 .dc-wrong{display:inline-block;margin-top:4px;font-size:11px;padding:2px 8px;border-radius:99px;background:#FCEBEB;color:#E24B4A;font-weight:600}
-.spk-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:8px;transition:background .15s;vertical-align:middle}
-.spk-btn:hover{background:#E6F1FB}
 </style>
 </head>
 <body>
 <div class="app" id="app"></div>
 <script>
+
+// =============================================
+// パスワード機能
+// =============================================
+var PW="iinekanji";
+var PW_KEY="kanji_n3_auth";
+
+function renderPasswordScreen(){
+  document.getElementById("app").innerHTML=
+    "<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;'>"+
+    "<div style='font-size:2.5rem;'>🔒</div>"+
+    "<div style='font-size:1.2rem;font-weight:bold;color:#1a3a5c;'>パスワードを入力してください</div>"+
+    "<div style='font-size:0.9rem;color:#666;'>Masukkan password</div>"+
+    "<input id='pw-input' type='password' placeholder='パスワード' style='padding:12px 20px;font-size:1rem;border:2px solid #ccc;border-radius:12px;outline:none;text-align:center;width:220px;' onkeydown='pwKeyHandler(event)' />"+
+    "<button onclick='checkPassword()' style='padding:12px 40px;background:#1a3a5c;color:#fff;border:none;border-radius:12px;font-size:1rem;cursor:pointer;'>入る</button>"+
+    "<div id='pw-error' style='color:#c0392b;font-size:0.9rem;min-height:1.2em;'></div>"+
+    "</div>";
+  setTimeout(function(){var el=document.getElementById("pw-input");if(el)el.focus();},100);
+}
+function pwKeyHandler(e){if(e.key==="Enter")checkPassword();}
+function checkPassword(){
+  var input=document.getElementById("pw-input").value;
+  if(input===PW){
+    localStorage.setItem(PW_KEY,"1");
+    renderWeekMenu();
+  }else{
+    document.getElementById("pw-error").textContent="パスワードが違います。Salah kata sandi.";
+    document.getElementById("pw-input").value="";
+    document.getElementById("pw-input").focus();
+  }
+}
+
+// =============================================
+// 進捗保存
+// =============================================
+var PROG_KEY="kanji_n3_progress";
+function loadProgress(){try{return JSON.parse(localStorage.getItem(PROG_KEY))||{};}catch(e){return {};}}
+function saveProgress(week,day,score,total){
+  var p=loadProgress();
+  if(!p[week])p[week]={};
+  var prev=p[week][day];
+  if(!prev||score/total>=prev.score/prev.total){
+    p[week][day]={score:score,total:total,date:new Date().toLocaleDateString("ja-JP")};
+  }
+  try{localStorage.setItem(PROG_KEY,JSON.stringify(p));}catch(e){}
+}
+function getProgress(week,day){var p=loadProgress();return (p[week]&&p[week][day])?p[week][day]:null;}
+
+// =============================================
+// 間違い保存・復習
+// =============================================
+var WRONG_KEY="kanji_n3_wrong";
+var isReviewMode=false;
+function loadWrong(){try{return JSON.parse(localStorage.getItem(WRONG_KEY))||{};}catch(e){return {};}}
+function saveWrong(week,day,q){
+  var w=loadWrong();
+  var key=week+"-"+day;
+  if(!w[key])w[key]=[];
+  var exists=w[key].some(function(x){return x.q===q.q&&x.type===q.type;});
+  if(!exists)w[key].push(q);
+  try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}
+}
+function getWrongQuestions(week,day){var w=loadWrong();return w[week+"-"+day]||[];}
+function clearWrong(week,day){var w=loadWrong();delete w[week+"-"+day];try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}}
+function clearWrongAll(week){var w=loadWrong();Object.keys(w).forEach(function(k){if(k.indexOf(week+"-")===0)delete w[k];});try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}}
+function startReview(week,day){
+  var wq=getWrongQuestions(week,day);
+  if(wq.length===0){alert("間違えた問題はありません！");return;}
+  currentWeek=week;currentDay=day;mode="all";
+  ql=shu(wq.slice());cur=0;sc=0;hist=[];
+  isReviewMode=true;
+  renderQuiz();
+}
+function resetWeek(week){
+  if(!confirm("この週の間違いをすべてリセットしますか？\nReset semua kesalahan minggu ini?"))return;
+  clearWrongAll(week);
+  renderDayMenu();
+}
 
 // WEEK/DAY DATA
 var WEEKS = {
@@ -497,15 +573,40 @@ var WEEKS = {
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"定期券",ch:["ていきけい","ていきかん","ていきけん","じょうきけん"],ans:2,mean:"決まった期間乗れるきっぷ／kartu langganan"},
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"賞品",ch:["しょうぴん","しょうひん","しょうびん","しょひん"],ans:1,mean:"賞としてもらう品物／hadiah lomba"}
 ]},
-"w3d3":{title:"3日目",titleId:"Hari 3",topic:"食品",questions:[
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"混雑：（　）ようす",sub:null,ch:["わけがわからない（membingungkan）","人などでいっぱいの（penuh orang）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"発表：（　）",sub:null,ch:["みんなに知らせること（memberitahu semua orang）","出発の時刻を書いたもの（jadwal keberangkatan）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"田中君の席は私の（　）です。",sub:null,ch:["後ろ（belakang）","裏（balik/belakang）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"データをグラフに（　）。",sub:null,ch:["現す（menampilkan）","表す（mengekspresikan）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"カンガルーのおなかには（　）がある。",sub:null,ch:["箱（kotak）","袋（kantong）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"オリンピックの（　）にえらばれる。",sub:null,ch:["代表（perwakilan）","表面（permukaan）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"パンを（　）。",sub:null,ch:["焼く（memanggang）","焼ける（terbakar/matang）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"足袋を（　）。",sub:null,ch:["かぶる（mengenakan di kepala）","はく（mengenakan di kaki）"],ans:1},
+"w3d3":{title:"3日目",titleId:"Hari 3",topic:"自動販売機",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"販売：（a. 売ること　b. 買うこと）",sub:null,ch:["a. 売ること（menjual）","b. 買うこと（membeli）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"機会：（a. マシン　b. チャンス）",sub:null,ch:["a. マシン（mesin）","b. チャンス（kesempatan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"返事：（a. よぶこと　b. こたえること）",sub:null,ch:["a. よぶこと（memanggil）","b. こたえること（menjawab）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"自動：（a. オートマチック　b. アスレチック）",sub:null,ch:["a. オートマチック（otomatis）","b. アスレチック（atletik）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"飛行：（a. 旅行すること　b. 空をとぶこと）",sub:null,ch:["a. 旅行すること（bepergian）","b. 空をとぶこと（terbang di langit）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"人口が（a. 減量する　b. 減少する）。",sub:null,ch:["a. 減量する（mengurangi berat badan）","b. 減少する（berkurang jumlahnya）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"おつりをもらうときは、（a. 返却ボタン　b. 確認ボタン）を押す。",sub:null,ch:["a. 返却ボタン（tombol pengembalian）","b. 確認ボタン（tombol konfirmasi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"甘くしたいので砂糖を（a. 増量する　b. 増加する）。",sub:null,ch:["a. 増量する（menambah jumlah）","b. 増加する（jumlah bertambah）"],ans:0},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"冷水",sub:null,ch:["おひや","りょうすい","れいすい","おみず"],ans:2,mean:"air dingin"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"増える",sub:null,ch:["ほえる","ふえる","はえる","ひえる"],ans:1,mean:"bertambah"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"減る",sub:null,ch:["はる","ふる","ひる","へる"],ans:3,mean:"berkurang"},
+{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"返す",sub:null,ch:["かいす","かえす","かれす","はずす"],ans:1,mean:"mengembalikan"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こおり の正しい漢字は？",sub:null,ch:["水","永","氷","凍"],ans:2,mean:"氷＝こおり／es"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ゆ の正しい漢字は？",sub:null,ch:["湯","場","揚","楊"],ans:0,mean:"湯＝熱い水／air panas"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きかい の正しい漢字は？",sub:null,ch:["自動","販売","機合","機械"],ans:3,mean:"機械＝マシン／mesin"},
+{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"りょう の正しい漢字は？",sub:null,ch:["重","量","黒","里"],ans:1,mean:"量＝数や分量／jumlah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自動販売機",ch:["じどうはんばい","じどうはんばいき","じどうへんばいき","じどうはんまいき"],ans:1,mean:"お金を入れて買う機械／mesin penjual otomatis"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"販売",ch:["ばんばい","はんばい","はんまい","へんばい"],ans:1,mean:"売ること／penjualan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"返却",ch:["へんきゃく","はんきゃく","へんぎゃく","へんきょく"],ans:0,mean:"返すこと／pengembalian"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"増量",ch:["ましりょう","ぞうりょう","ぞうかさ","ぞうりゅう"],ans:1,mean:"量を増やす／menambah jumlah"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"減少",ch:["げんしょう","げんすう","げんしょ","へんしょう"],ans:0,mean:"数や量が減る／penurunan"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"機械",ch:["きがい","きけい","きかい","きさい"],ans:2,mean:"マシン／mesin"},
+{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"お湯",ch:["おゆう","おゆ","おとう","おみず"],ans:1,mean:"熱い水／air panas"}
+]},
+"w3d4":{title:"4日目",titleId:"Hari 4",topic:"レシピ",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"混雑：（a. わけがわからない　b. 人などでいっぱいの）ようす",sub:null,ch:["a. わけがわからない（membingungkan）","b. 人などでいっぱいの（penuh orang）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"発表：（a. みんなに知らせること　b. 出発の時刻を書いたもの）",sub:null,ch:["a. みんなに知らせること（memberitahu semua orang）","b. 出発の時刻を書いたもの（jadwal keberangkatan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"田中君の席は私の（a. 後ろ　b. 裏）です。",sub:null,ch:["a. 後ろ（belakang）","b. 裏（balik di sisi sebaliknya）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"データをグラフに（a. 現す　b. 表す）。",sub:null,ch:["a. 現す（muncul, tampak）","b. 表す（menunjukkan, menyatakan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"カンガルーのおなかには（a. 箱　b. 袋）がある。",sub:null,ch:["a. 箱（kotak）","b. 袋（kantong）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"オリンピックの（a. 代表　b. 表面）にえらばれる。",sub:null,ch:["a. 代表（perwakilan）","b. 表面（permukaan）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"パンを（a. 焼く　b. 焼ける）。",sub:null,ch:["a. 焼く（memanggang/aktif memanggang）","b. 焼ける（terbakar/matang sendiri）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"足袋を（a. かぶる　b. はく）。",sub:null,ch:["a. かぶる（mengenakan di kepala）","b. はく（mengenakan di kaki）"],ans:1},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"混ぜる",sub:null,ch:["まぜる","もぜる","なぜる","ねぜる"],ans:0,mean:"mencampur, mengaduk"},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"牛乳",sub:null,ch:["にゅうぎゅう","ぎゅうにゅう","にゅうぎょう","ぎょうにょう"],ans:1,mean:"susu sapi"},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"小麦粉",sub:null,ch:["こむりこ","こめぎこ","きなこ","こむぎこ"],ans:3,mean:"tepung terigu"},
@@ -522,15 +623,15 @@ var WEEKS = {
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"小麦粉",ch:["こめぎこ","こむぎこな","こむこ","こむぎこ"],ans:3,mean:"パンやケーキに使う粉／tepung terigu"},
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"表面",ch:["ひょうおもて","ひょうめい","おもてめん","ひょうめん"],ans:3,mean:"物の外側の面／permukaan"}
 ]},
-"w3d4":{title:"4日目",titleId:"Hari 4",topic:"レシピ",questions:[
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"留学：（　）こと",sub:null,ch:["卒業できない（tidak bisa lulus）","外国へ勉強に行く（belajar ke luar negeri）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"用件：（　）こと",sub:null,ch:["伝えたい（ingin disampaikan）","起こった（terjadi）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"件名：電子メールなどの（　）",sub:null,ch:["アドレス（alamat）","タイトル（judul）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"保留：しばらく（　）こと",sub:null,ch:["外国に住む（tinggal di luar negeri）","そのままにする（dibiarkan dulu）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"あの選手は（　）がうまい。",sub:null,ch:["予防（pencegahan）","守備（pertahanan）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"重要な書類を（　）で送る。",sub:null,ch:["書留（surat tercatat）","快速（kereta cepat）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"両親が出かけて、私は（　）をした。",sub:null,ch:["留守（menjaga rumah）","留守番（penjaga rumah）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"約束や時間を（　）。",sub:null,ch:["限る（membatasi）","守る（menepati）"],ans:1},
+"w3d5":{title:"5日目",titleId:"Hari 5",topic:"コピー機・留守番電話",questions:[
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"留学：（a. 卒業できない　b. 外国へ勉強に行く）こと",sub:null,ch:["a. 卒業できない（tidak bisa lulus）","b. 外国へ勉強に行く（belajar ke luar negeri）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"用件：（a. 伝えたい　b. 起こった）こと",sub:null,ch:["a. 伝えたい（ingin disampaikan）","b. 起こった（terjadi）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"件名：電子メールなどの（a. アドレス　b. タイトル）",sub:null,ch:["a. アドレス（alamat）","b. タイトル（judul）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"保留：しばらく（a. 外国に住む　b. そのままにする）こと",sub:null,ch:["a. 外国に住む（tinggal di luar negeri）","b. そのままにする（dibiarkan dulu）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"あの選手は（a. 予防　b. 守備）がうまい。",sub:null,ch:["a. 予防（pencegahan）","b. 守備（pertahanan）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"重要な書類を（a. 書留　b. 快速）で送る。",sub:null,ch:["a. 書留（pos tercatat）","b. 快速（kereta ekspres）"],ans:0},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"両親が出かけて、私は（a. 留守　b. 留守番）をした。",sub:null,ch:["a. 留守（menjaga rumah）","b. 留守番（penjaga rumah）"],ans:1},
+{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"約束や時間を（a. 限る　b. 守る）。",sub:null,ch:["a. 限る（membatasi）","b. 守る（menepati）"],ans:1},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"再来週",sub:null,ch:["さんらいしゅう","さいらいしゅう","さっらいしゅう","さらいしゅう"],ans:3,mean:"minggu depannya lagi (dua minggu lagi)"},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"留守",sub:null,ch:["るしゅ","りゅす","るす","りゅしゅ"],ans:2,mean:"tidak ada di rumah, menjaga rumah"},
 {sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"数える",sub:null,ch:["かじょえる","かずえる","かぞえる","かじゅえる"],ans:2,mean:"menghitung"},
@@ -546,31 +647,6 @@ var WEEKS = {
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"部分",ch:["ぶわけ","ぶわけ","ぶぶん","ほうぶん"],ans:2,mean:"全体の一部／bagian"},
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"再来週",ch:["またらいしゅう","さらいしゅう","さらしゅう","さいらいしゅう"],ans:1,mean:"来週の次の週／dua minggu lagi"},
 {sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"用件",ch:["ようけん","もちごと","ようごと","もちけん"],ans:0,mean:"伝えたいこと・要件／keperluan, urusan"}
-]},
-"w3d5":{title:"5日目",titleId:"Hari 5",topic:"コピー機・留守番電話",questions:[
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"販売：（　）こと",sub:null,ch:["売ること（menjual）","買うこと（membeli）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"機会：（　）",sub:"マシン＝machine／チャンス＝chance",ch:["マシン（mesin）","チャンス（kesempatan）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"返事：（　）こと",sub:null,ch:["よぶこと（memanggil）","こたえること（membalas）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"自動：（　）",sub:"オートマチック＝automatic／アスレチック＝athletic",ch:["オートマチック（otomatis）","アスレチック（atletik）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"飛行：（　）こと",sub:null,ch:["旅行すること（melakukan perjalanan）","空をとぶこと（terbang di langit）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"人口が（　）する。",sub:null,ch:["減量（mengurangi berat）","減少（berkurang）"],ans:0},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"おつりをもらうときは、（　）ボタンを押す。",sub:null,ch:["返却（pengembalian）","確認（konfirmasi）"],ans:1},
-{sec:"I",lbl:"意味 / Arti",type:"meaning",q:"甘くしたいので砂糖を（　）する。",sub:null,ch:["増量（menambah jumlah）","増加（bertambah）"],ans:1},
-{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"冷水",sub:null,ch:["おひや","りょうすい","れいすい","おみず"],ans:3,mean:"air dingin"},
-{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"増える",sub:null,ch:["ほえる","ふえる","はえる","ひえる"],ans:2,mean:"bertambah, meningkat"},
-{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"減る",sub:null,ch:["はる","ふる","ひる","へる"],ans:2,mean:"berkurang, menurun"},
-{sec:"II",lbl:"読み / Cara Baca",type:"reading",q:"返す",sub:null,ch:["かいす","かえす","かれす","はずす"],ans:1,mean:"mengembalikan"},
-{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"こおり の正しい漢字は？",sub:null,ch:["水","永","氷","凍"],ans:3,mean:"氷＝固まった水／es"},
-{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"ゆ の正しい漢字は？",sub:null,ch:["湯","場","揚","楊"],ans:3,mean:"湯＝熱い水／air panas"},
-{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"きかい の正しい漢字は？",sub:null,ch:["自動","販売","機合","機械"],ans:0,mean:"機械＝エンジンや装置／mesin"},
-{sec:"III",lbl:"漢字 / Kanji",type:"kanji",q:"りょう の正しい漢字は？",sub:null,ch:["重","量","黒","里"],ans:1,mean:"量＝多さ・分量／jumlah, kuantitas"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"販売",ch:["はんばえ","はんばい","はんめい","はいばん"],ans:1,mean:"売ること／penjualan"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"返却",ch:["かえしきゃく","へんきく","へんきゃく","へんかく"],ans:2,mean:"借りた物を返すこと／pengembalian"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"増加",ch:["そうか","ぞうが","ぞうか","ぞか"],ans:2,mean:"数が増えること／penambahan, pertambahan"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"減少",ch:["げんすく","げんしょ","げんしょう","へんしょう"],ans:2,mean:"数が減ること／pengurangan, penurunan"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"機械",ch:["きかえ","きかい","きけい","きがい"],ans:1,mean:"エンジンや装置／mesin"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"自動",ch:["じどお","じとう","じどう","しどう"],ans:2,mean:"自然に動くこと／otomatis"},
-{sec:"IV",lbl:"問題文の漢字 / Kanji dalam soal",type:"vocab",q:"返事",ch:["へんじ","へんこと","かえしごと","かえじ"],ans:0,mean:"こたえること／balasan, jawaban"}
 ]},"w3d6":{title:"6日目",titleId:"Hari 6",topic:"携帯電話",questions:[
 {sec:"I",lbl:"意味 / Arti",type:"meaning",q:"接続：（　）こと",sub:null,ch:["つながること（terhubung）","つづくこと（berlanjut）"],ans:0},
 {sec:"I",lbl:"意味 / Arti",type:"meaning",q:"完全：（　）",sub:"パーフェクト＝perfect／セーフティ＝safety",ch:["パーフェクト（sempurna）","セーフティ（keselamatan）"],ans:0},
@@ -1203,94 +1279,9 @@ function answer(i){
   var q=ql[cur];var ok=i===q.ans;
   if(ok)sc++;
   hist[cur]={chosen:i,correct:ok};
-  if(!ok) saveWrong(currentWeek,currentDay,q);
+  if(!ok&&!isReviewMode)saveWrong(currentWeek,currentDay,q);
   renderAnswered(q,i,ok);
 }
-
-// =============================================
-// 音声読み上げ
-// =============================================
-function speak(text){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  var u=new SpeechSynthesisUtterance(text);
-  u.lang="ja-JP";u.rate=0.85;u.pitch=1.0;
-  window.speechSynthesis.speak(u);
-}
-
-// =============================================
-// 進捗保存（localStorage）
-// =============================================
-var PROG_KEY="kanji_n3_progress";
-var WRONG_KEY="kanji_n3_wrong";
-
-function loadProgress(){
-  try{return JSON.parse(localStorage.getItem(PROG_KEY))||{};}catch(e){return {};}
-}
-function saveProgress(week,day,score,total){
-  var p=loadProgress();
-  if(!p[week])p[week]={};
-  var prev=p[week][day];
-  // ベストスコアを保持
-  if(!prev||score/total>=prev.score/prev.total){
-    p[week][day]={score:score,total:total,date:new Date().toLocaleDateString("ja-JP")};
-  }
-  try{localStorage.setItem(PROG_KEY,JSON.stringify(p));}catch(e){}
-}
-function getProgress(week,day){
-  var p=loadProgress();
-  return (p[week]&&p[week][day])?p[week][day]:null;
-}
-
-// =============================================
-// 間違い保存・復習モード
-// =============================================
-function loadWrong(){
-  try{return JSON.parse(localStorage.getItem(WRONG_KEY))||{};}catch(e){return {};}
-}
-function saveWrong(week,day,q){
-  var w=loadWrong();
-  var key=week+"-"+day;
-  if(!w[key])w[key]=[];
-  // 重複チェック（qで比較）
-  var exists=w[key].some(function(x){return x.q===q.q&&x.type===q.type;});
-  if(!exists)w[key].push(q);
-  try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}
-}
-function getWrongQuestions(week,day){
-  var w=loadWrong();
-  return w[week+"-"+day]||[];
-}
-function clearWrong(week,day){
-  var w=loadWrong();
-  delete w[week+"-"+day];
-  try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}
-}
-function clearWrongAll(week){
-  var w=loadWrong();
-  Object.keys(w).forEach(function(k){if(k.indexOf(week+"-")===0)delete w[k];});
-  try{localStorage.setItem(WRONG_KEY,JSON.stringify(w));}catch(e){}
-}
-function resetDay(week,day){
-  if(!confirm("この日の間違いリストをリセットしますか？\nReset daftar kesalahan hari ini?"))return;
-  clearWrong(week,day);
-  renderDayMenu();
-}
-function resetWeek(week){
-  if(!confirm("この週の間違いリストをすべてリセットしますか？\nReset semua daftar kesalahan minggu ini?"))return;
-  clearWrongAll(week);
-  renderDayMenu();
-}
-function startReview(week,day){
-  var wq=getWrongQuestions(week,day);
-  if(wq.length===0){alert("間違えた問題はありません！ / Tidak ada soal yang salah!");return;}
-  currentWeek=week;currentDay=day;mode="all";
-  ql=shu(wq.slice());cur=0;sc=0;hist=[];
-  isReviewMode=true;
-  renderQuiz();
-}
-var isReviewMode=false;
-
 function renderAnswered(q,chosen,ok){
   document.querySelectorAll(".cb").forEach(function(b){b.disabled=true;});
   document.getElementById("b"+chosen).classList.add(ok?"ok":"ng");
@@ -1337,8 +1328,7 @@ function renderDayMenu(){
   html+="<div class='day-cards'>";
   dayKeys.forEach(function(d){
     var day=wdata.days[d];
-    var num=d.replace(/w\dd/,"").replace(/\D/g,"");
-    num=d.match(/\d+$/)[0];
+    var num=d.match(/\d+$/)[0];
     var prog=getProgress(currentWeek,d);
     var wrongQ=getWrongQuestions(currentWeek,d);
     var hasWrong=wrongQ.length>0;
@@ -1348,15 +1338,14 @@ function renderDayMenu(){
     html+="<div class='dc-sub'>"+day.topic+"</div>";
     html+="<div class='dc-count'>"+day.questions.length+"問</div>";
     if(prog)html+="<div style='font-size:10px;color:#1D9E75;margin-top:3px;font-weight:600'>✓ "+prog.score+"/"+prog.total+" ("+Math.round(prog.score/prog.total*100)+"%)</div>";
-    if(hasWrong)html+="<div class='dc-wrong' style='cursor:default'>❌ "+wrongQ.length+"問 復習 <span class='rst-day' data-w='"+currentWeek+"' data-d='"+d+"' title='リセット' style='cursor:pointer;margin-left:4px;font-size:11px;color:#999;'>🗑</span></div>";
+    if(hasWrong)html+="<div class='dc-wrong'>❌ "+wrongQ.length+"問 復習 <span class='rst-day' data-w='"+currentWeek+"' data-d='"+d+"' title='リセット' style='cursor:pointer;margin-left:4px;color:#999;'>🗑</span></div>";
     html+="</div>";
   });
   html+="</div>";
-  // 週全体のリセットボタン（間違いがある場合のみ表示）
   var hasAnyWrong=dayKeys.some(function(d){return getWrongQuestions(currentWeek,d).length>0;});
   if(hasAnyWrong){
     html+="<div style='margin-top:16px;text-align:center'>";
-    html+="<button onclick=\'resetWeek(currentWeek)\' style=\'padding:8px 18px;border:1.5px solid #E24B4A;border-radius:10px;color:#E24B4A;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;\'>🗑 この週の間違いをすべてリセット</button>";
+    html+="<button onclick='resetWeek(currentWeek)' style='padding:8px 18px;border:1.5px solid #E24B4A;border-radius:10px;color:#E24B4A;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;'>🗑 この週の間違いをすべてリセット</button>";
     html+="</div>";
   }
   html+="</div>";
@@ -1384,11 +1373,9 @@ function renderQuiz(){
   var visibleTabs=dayNum==="7"?TABS.filter(function(t){return t.k!=="vocab";}):TABS;
   var tabsH=visibleTabs.map(function(t){var on=mode===t.k?" on":"";return "<button class=\'tab"+on+"\' data-k=\'"+t.k+"\' onclick=\'setMode(this.dataset.k)\'>"+t.l+"</button>";}).join("");
   var isV=q.type==="vocab";
-  var isSpeak=(q.type==="vocab"||q.type==="reading"||q.type==="kanji");
-  var spkWord=q.type==="vocab"?q.q:q.q.replace(/\[[^\]]+\]/g,function(m){return m.slice(1,-1);}).replace(/<[^>]+>/g,"").replace(/[（(][^）)]*[）)]/g,"").trim().split("\n")[0];
   var qH=isV
-    ?"<span class=\'kbig\' style=\'cursor:pointer;user-select:none\' onclick=\'speak(this.textContent)\' title=\'クリックで読み上げ\'>"+q.q+"</span><button class=\'spk-btn\' onclick=\'speak(\""+q.q+"\")\'>🔊</button><span style=\'font-size:14px;color:#666;display:inline-block\'>読み方は？/ Bagaimana cara bacanya?</span>"
-    :q.q.replace(/\n/g,"<br>")+(q.sub?"<div class=\'sub-hint\'>"+q.sub+"</div>":"")+( isSpeak?"<button class=\'spk-btn\' onclick=\'speak(\""+spkWord.replace(/"/g,"").replace(/'/g,"")+"\")\'>🔊</button>":"");
+    ?"<span class='kbig'>"+q.q+"</span><span style='font-size:14px;color:#666;display:inline-block'>読み方は？/ Bagaimana cara bacanya?</span>"
+    :q.q.replace(/\n/g,"<br>")+(q.sub?"<div class='sub-hint'>"+q.sub+"</div>":"");
   var backBtn=cur>0?"<button class='bck' onclick='back()'>← 前の問題</button>":"<span></span>";
   var nxtLbl=cur+1<ql.length?"次の問題へ →":"結果を見る →";
   var choicesH=q.ch.map(function(c,i){return "<button class='cb' id='b"+i+"' onclick='answer("+i+")'><span class='cl'>"+LT[i]+".</span><span>"+c+"</span></button>";}).join("");
@@ -1423,7 +1410,7 @@ function renderScore(app){
   var wdata=WEEKS[currentWeek];
   var dayNum=currentDay.match(/\d+$/)[0];
   var wrongCount=ql.length-sc;
-  if(!isReviewMode) saveProgress(currentWeek,currentDay,sc,ql.length);
+  if(!isReviewMode)saveProgress(currentWeek,currentDay,sc,ql.length);
   var reviewBtn=wrongCount>0
     ?"<button class='rbtn rev' onclick='startReview(currentWeek,currentDay)'>🔁 間違い復習 ("+wrongCount+"問)</button>"
     :"<button class='rbtn' style='background:#1D9E75;cursor:default' disabled>✅ 全問正解！</button>";
@@ -1445,44 +1432,11 @@ function renderScore(app){
     "</div></div>";
 }
 
-// パスワード機能
-var PW = "iinekanji";
-var PW_KEY = "kanji_n3_auth";
-
-function pwKeyHandler(e){if(e.key==="Enter")checkPassword();}
-
-function renderPasswordScreen() {
-  document.getElementById("app").innerHTML =
-    "<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;'>" +
-    "<div style='font-size:2.5rem;'>🔒</div>" +
-    "<div style='font-size:1.2rem;font-weight:bold;color:#1a3a5c;'>パスワードを入力してください</div>" +
-    "<div style='font-size:0.9rem;color:#666;'>Masukkan password</div>" +
-    "<input id='pw-input' type='password' placeholder='パスワード' style='padding:12px 20px;font-size:1rem;border:2px solid #ccc;border-radius:12px;outline:none;text-align:center;width:220px;' onkeydown='pwKeyHandler(event)' />" +
-    "<button onclick='checkPassword()' style='padding:12px 40px;background:#1a3a5c;color:#fff;border:none;border-radius:12px;font-size:1rem;cursor:pointer;'>入る</button>" +
-    "<div id='pw-error' style='color:#c0392b;font-size:0.9rem;min-height:1.2em;'></div>" +
-    "</div>";
-  setTimeout(function(){ var el=document.getElementById("pw-input"); if(el) el.focus(); }, 100);
-}
-
-function checkPassword() {
-  var input = document.getElementById("pw-input").value;
-  if (input === PW) {
-    localStorage.setItem(PW_KEY, "1");
-    renderWeekMenu();
-  } else {
-    document.getElementById("pw-error").textContent = "パスワードが違います。Kata sandi salah.";
-    document.getElementById("pw-input").value = "";
-    document.getElementById("pw-input").focus();
-  }
-}
-
-// 初回のみパスワード確認
-if (localStorage.getItem(PW_KEY) === "1") {
+if(localStorage.getItem(PW_KEY)==="1"){
   renderWeekMenu();
-} else {
+}else{
   renderPasswordScreen();
 }
-
 </script>
 </body>
 </html>
